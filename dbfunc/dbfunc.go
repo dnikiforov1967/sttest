@@ -6,13 +6,13 @@ import (
 )
 
 type Product struct {
-    Id int64
-    Name string
-    Product_id string
-    Category string
-    Quanto bool
-    CreationDate string
-    ExpirationDate string
+    id int64
+    Name string `json:"name,omitempty"`
+    Product_id string `json:"product_id,omitempty"`
+    Category string `json:"category,omitempty"`
+    Quanto bool `json:"quanto,omitempty"`
+    CreationDate string `json:"creationDate,omitempty"`
+    ExpirationDate string `json:"expirationDate,omitempty"`
 }
 
 func openLocalDb() *sql.DB {
@@ -36,7 +36,7 @@ func (prod *Product) FetchProductByProductId() {
     defer db.Close()
     row := db.QueryRow("select id, name, product_id, category, quanto, creationDate, expirationDate from products where product_id = $1",
     prod.Product_id);
-    err := row.Scan(&prod.Id, &prod.Name, &prod.Product_id, &prod.Category, &prod.Quanto, &prod.CreationDate, &prod.ExpirationDate)
+    err := row.Scan(&prod.id, &prod.Name, &prod.Product_id, &prod.Category, &prod.Quanto, &prod.CreationDate, &prod.ExpirationDate)
     if err != nil{
         panic(err)
     }
@@ -55,7 +55,7 @@ func (prod *Product) InsertProduct() {
         tx.Rollback()
         panic(err)
     }
-    prod.Id, _ = result.LastInsertId();
+    prod.id, _ = result.LastInsertId();
     err = tx.Commit()
     if err != nil{
         panic(err)
@@ -70,7 +70,7 @@ func (prod *Product) UpdateProduct() {
     tx := openTrans(db)
 
     _, err := tx.Exec("update products set name=$1, product_id=$2, category=$3, quanto=$4 where id=$5", 
-        prod.Name, prod.Product_id, prod.Category, prod.Quanto, prod.Id);
+        prod.Name, prod.Product_id, prod.Category, prod.Quanto, prod.id);
     if err != nil{
         tx.Rollback()
         panic(err)
@@ -111,7 +111,7 @@ func (prod *Product) DeleteProduct() {
     tx := openTrans(db)
 
     _, err := tx.Exec("delete from products where id = $1", 
-        prod.Id);
+        prod.id);
     if err != nil{
         tx.Rollback()
         panic(err)
