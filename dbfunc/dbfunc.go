@@ -23,6 +23,14 @@ func openLocalDb() *sql.DB {
     return db;
 }
 
+func openTrans(db *sql.DB) *sql.Tx {
+    tx, err := db.Begin()
+    if err != nil {
+        panic(err)
+    }
+    return tx;
+}
+
 func (prod *Product) InsertProduct() {
     
     db := openLocalDb();
@@ -32,10 +40,7 @@ func (prod *Product) InsertProduct() {
     if prod.Quanto {
         quanto = 1
     }
-    tx, err := db.Begin()
-    if err != nil {
-        panic(err)
-    }
+    tx := openTrans(db)
 
     result, err := tx.Exec("insert into products (name, product_id, category, quanto, creationDate, expirationDate) values ($1, $2, $3, $4, $5, $6)", 
         prod.Name, prod.Product_id, prod.Category, quanto, prod.CreationDate, prod.ExpirationDate);
@@ -56,12 +61,9 @@ func (prod *Product) DeleteProductByProductId() {
 
     defer db.Close()
 
-    tx, err := db.Begin()
-    if err != nil {
-        panic(err)
-    }
+    tx := openTrans(db)
 
-    _, err = tx.Exec("delete from products where product_id = $1", 
+    _, err := tx.Exec("delete from products where product_id = $1", 
         prod.Product_id);
     if err != nil{
         tx.Rollback()
@@ -79,12 +81,9 @@ func (prod *Product) DeleteProduct() {
 
     defer db.Close()
 
-    tx, err := db.Begin()
-    if err != nil {
-        panic(err)
-    }
+    tx := openTrans(db)
 
-    _, err = tx.Exec("delete from products where id = $1", 
+    _, err := tx.Exec("delete from products where id = $1", 
         prod.Id);
     if err != nil{
         tx.Rollback()
