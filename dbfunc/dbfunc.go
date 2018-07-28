@@ -1,6 +1,7 @@
 package dbfunc
 
 import (
+    "../errhand"
     "database/sql"
     _ "github.com/mattn/go-sqlite3"
 )
@@ -31,15 +32,20 @@ func openTrans(db *sql.DB) *sql.Tx {
     return tx;
 }
 
-func (prod *Product) FetchProductByProductId() {
+func (prod *Product) FetchProductByProductId() (error) {
     db := openLocalDb();
     defer db.Close()
     row := db.QueryRow("select id, name, product_id, category, quanto, creationDate, expirationDate from products where product_id = $1",
     prod.Product_id);
     err := row.Scan(&prod.id, &prod.Name, &prod.Product_id, &prod.Category, &prod.Quanto, &prod.CreationDate, &prod.ExpirationDate)
-    if err != nil{
-        panic(err)
-    }
+    if err != nil {
+        if err != sql.ErrNoRows {
+            return err
+        } else {
+            return errhand.ErrProdNotFound
+        }
+    } 
+    return nil
 }
 
 func (prod *Product) InsertProduct() {

@@ -2,6 +2,7 @@ package rest
 
 import "../dbfunc"
 import "net/http"
+import "../errhand"
 import "encoding/json"
 import "github.com/gorilla/mux"
 
@@ -16,6 +17,13 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
     params := mux.Vars(r) 
     var product dbfunc.Product
     product.Product_id = params["id"]
-    product.FetchProductByProductId()
+    err := product.FetchProductByProductId()
+    if err == errhand.ErrProdNotFound {
+        http.Error(w, err.Error(), 404)
+        return
+    } else if err != nil {
+        http.Error(w, err.Error(), 500)
+        return
+    }
     json.NewEncoder(w).Encode(product);
 }
