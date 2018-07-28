@@ -42,3 +42,49 @@ func (prod *Product) InsertProduct() {
         panic(err)
     }
 }
+
+func (prod *Product) DeleteProductByProductId() {
+    
+    db, err := sql.Open("sqlite3", "sttest.sqlt")
+    if err != nil {
+        panic(err)
+    }
+    defer db.Close()
+    tx, err := db.Begin()
+    if err != nil {
+        panic(err)
+    }
+    _, err = tx.Exec("delete from products where product_id = $1", 
+        prod.Product_id);
+    if err != nil{
+        tx.Rollback()
+        panic(err)
+    }
+    err = tx.Commit()
+    if err != nil{
+        panic(err)
+    }
+}
+
+func (prod *Product) DeleteProduct() {
+    
+    db, err := sql.Open("sqlite3", "sttest.sqlt")
+    if err != nil {
+        panic(err)
+    }
+    defer db.Close()
+    tx, err := db.Begin()
+    if err != nil {
+        panic(err)
+    }
+    _, err = tx.Exec("delete from products where id = $1", 
+        prod.Id);
+    if err != nil{
+        tx.Rollback()
+        panic(err)
+    }
+    err = tx.Commit()
+    if err != nil{
+        panic(err)
+    }
+}
