@@ -8,5 +8,6 @@ import "./rest"
 func main() {
     router := mux.NewRouter().StrictSlash(true)
     router.HandleFunc("/product", rest.CreateProduct).Methods("POST")
+    router.HandleFunc("/product/{id}", rest.GetProduct).Methods("GET")
     log.Fatal(http.ListenAndServe(":8080", router))
 }
