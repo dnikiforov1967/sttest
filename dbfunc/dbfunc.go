@@ -10,7 +10,7 @@ type Product struct {
     Name string
     Product_id string
     Category string
-    Quanto bool
+    Quanto int
     CreationDate string
     ExpirationDate string
 }
@@ -31,19 +31,26 @@ func openTrans(db *sql.DB) *sql.Tx {
     return tx;
 }
 
+func (prod *Product) FetchProductByProductId() {
+    db := openLocalDb();
+    defer db.Close()
+    row := db.QueryRow("select id, name, product_id, category, quanto, creationDate, expirationDate from products where product_id = $1",
+    prod.Product_id);
+    err := row.Scan(&prod.Id, &prod.Name, &prod.Product_id, &prod.Category, &prod.Quanto, &prod.CreationDate, &prod.ExpirationDate)
+    if err != nil{
+        panic(err)
+    }
+}
+
 func (prod *Product) InsertProduct() {
     
     db := openLocalDb();
 
     defer db.Close()
-    var quanto int = 0;
-    if prod.Quanto {
-        quanto = 1
-    }
     tx := openTrans(db)
 
     result, err := tx.Exec("insert into products (name, product_id, category, quanto, creationDate, expirationDate) values ($1, $2, $3, $4, $5, $6)", 
-        prod.Name, prod.Product_id, prod.Category, quanto, prod.CreationDate, prod.ExpirationDate);
+        prod.Name, prod.Product_id, prod.Category, prod.Quanto, prod.CreationDate, prod.ExpirationDate);
     if err != nil{
         tx.Rollback()
         panic(err)
@@ -60,14 +67,10 @@ func (prod *Product) UpdateProduct() {
     db := openLocalDb();
 
     defer db.Close()
-    var quanto int = 0;
-    if prod.Quanto {
-        quanto = 1
-    }
     tx := openTrans(db)
 
     _, err := tx.Exec("update products set name=$1, product_id=$2, category=$3, quanto=$4 where id=$5", 
-        prod.Name, prod.Product_id, prod.Category, quanto, prod.Id);
+        prod.Name, prod.Product_id, prod.Category, prod.Quanto, prod.Id);
     if err != nil{
         tx.Rollback()
         panic(err)
