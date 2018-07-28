@@ -55,6 +55,30 @@ func (prod *Product) InsertProduct() {
     }
 }
 
+func (prod *Product) UpdateProduct() {
+    
+    db := openLocalDb();
+
+    defer db.Close()
+    var quanto int = 0;
+    if prod.Quanto {
+        quanto = 1
+    }
+    tx := openTrans(db)
+
+    _, err := tx.Exec("update products set name=$1, product_id=$2, category=$3, quanto=$4 where id=$5", 
+        prod.Name, prod.Product_id, prod.Category, quanto, prod.Id);
+    if err != nil{
+        tx.Rollback()
+        panic(err)
+    }
+
+    err = tx.Commit()
+    if err != nil{
+        panic(err)
+    }
+}
+
 func (prod *Product) DeleteProductByProductId() {
     
     db := openLocalDb()

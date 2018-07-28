@@ -8,5 +8,7 @@ func main() {
         product := dbfunc.Product{0, "S","T1","Y",true,"2017-01-01","2017-01-01"}
         product.InsertProduct();
         fmt.Printf("ID IS %d\n",product.Id);
+        product.Name="XXX"
+        product.UpdateProduct();
         product.DeleteProductByProductId();
 }
