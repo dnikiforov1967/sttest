@@ -1,20 +1,12 @@
 package main
 
-import "fmt"
-import "./dbfunc"
+import "log"
+import "net/http"
+import "github.com/gorilla/mux"
+import "./rest"
 
 func main() {
-	fmt.Printf("ST test started\n");
-        product := dbfunc.Product{0, "S","T1","Y",false,"2017-01-01","2017-01-01"}
-        product.InsertProduct();
-        fmt.Printf("ID IS %d\n",product.Id);
-        product.Name="XXX"
-        product.UpdateProduct();
-
-        fetched := dbfunc.Product{}
-        fetched.Product_id = product.Product_id
-        fetched.FetchProductByProductId()
-        fmt.Println(fetched.Name);
-        fmt.Println(fetched.Quanto);
-        product.DeleteProductByProductId();
+    router := mux.NewRouter().StrictSlash(true)
+    router.HandleFunc("/product", rest.CreateProduct).Methods("POST")
+    log.Fatal(http.ListenAndServe(":8080", router))
 }
