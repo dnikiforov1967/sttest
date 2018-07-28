@@ -10,7 +10,7 @@ type Product struct {
     Name string
     Product_id string
     Category string
-    Quanto int
+    Quanto bool
     CreationDate string
     ExpirationDate string
 }

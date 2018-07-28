@@ -13,7 +13,7 @@ CREATE TABLE products(
     name  TEXT NOT NULL,
     product_id TEXT NOT NULL UNIQUE,
     category TEXT NOT NULL,
-    quanto INTEGER NOT NULL,
+    quanto NUMERIC NOT NULL,
     creationDate TEXT NOT NULL,
     expirationDate TEXT NOT NULL
 );
