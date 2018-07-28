@@ -9,7 +9,11 @@ import "github.com/gorilla/mux"
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
     var product dbfunc.Product 
     _ = json.NewDecoder(r.Body).Decode(&product)
-    product.InsertProduct()
+    err := product.InsertProduct()
+    if err != nil {
+        http.Error(w, err.Error(), 500)
+        return
+    }
     json.NewEncoder(w).Encode(product);
 }
 

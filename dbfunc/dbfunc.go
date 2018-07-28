@@ -48,7 +48,7 @@ func (prod *Product) FetchProductByProductId() (error) {
     return nil
 }
 
-func (prod *Product) InsertProduct() {
+func (prod *Product) InsertProduct() error {
     
     db := openLocalDb();
 
@@ -59,13 +59,14 @@ func (prod *Product) InsertProduct() {
         prod.Name, prod.Product_id, prod.Category, prod.Quanto, prod.CreationDate, prod.ExpirationDate);
     if err != nil{
         tx.Rollback()
-        panic(err)
+        return err
     }
     prod.id, _ = result.LastInsertId();
     err = tx.Commit()
     if err != nil{
         panic(err)
     }
+    return nil
 }
 
 func (prod *Product) UpdateProduct() {
