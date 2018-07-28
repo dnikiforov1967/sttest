@@ -23,14 +23,22 @@ func (prod *Product) InsertProduct() {
     }
     defer db.Close()
     var quanto int = 0;
-    if (prod.Quanto) {
+    if prod.Quanto {
         quanto = 1
     }
-    result, err := db.Exec("insert into products (name, product_id, category, quanto, creationDate, expirationDate) values ($1, $2, $3, $4, $5, $6)", 
+    tx, err := db.Begin()
+    if err != nil {
+        panic(err)
+    }
+    result, err := tx.Exec("insert into products (name, product_id, category, quanto, creationDate, expirationDate) values ($1, $2, $3, $4, $5, $6)", 
         prod.Name, prod.Product_id, prod.Category, quanto, prod.CreationDate, prod.ExpirationDate);
     if err != nil{
+        tx.Rollback()
         panic(err)
     }
     prod.Id, _ = result.LastInsertId();
-
+    err = tx.Commit()
+    if err != nil{
+        panic(err)
+    }
 }
