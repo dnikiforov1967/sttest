@@ -11,7 +11,7 @@ type Product struct {
     Name string `json:"name,omitempty"`
     Product_id string `json:"product_id,omitempty"`
     Category string `json:"category,omitempty"`
-    Quanto bool `json:"quanto,omitempty"`
+    Quanto bool `json:"quanto"`
     CreationDate string `json:"creationDate,omitempty"`
     ExpirationDate string `json:"expirationDate,omitempty"`
 }
