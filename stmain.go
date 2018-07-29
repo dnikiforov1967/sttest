@@ -4,6 +4,7 @@ import "log"
 import "net/http"
 import "github.com/gorilla/mux"
 import "./rest"
+import "./asyncservice"
 
 func main() {
     router := mux.NewRouter().StrictSlash(true)
@@ -11,5 +12,6 @@ func main() {
     router.HandleFunc("/product/{id}", rest.GetProduct).Methods("GET")
     router.HandleFunc("/product/{id}", rest.UpdateProduct).Methods("PUT")
     router.HandleFunc("/product/{id}", rest.DeleteProduct).Methods("DELETE")
+    router.HandleFunc("/price", asyncservice.AcceptPriceRequest).Methods("POST")
     log.Fatal(http.ListenAndServe(":8080", router))
 }
