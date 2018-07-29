@@ -22,6 +22,8 @@ type TermsStruct struct {
 }
 
 type Event struct {
+    id int64
+    parent_id int64
     EventType string `json:"type"`
 }
 
@@ -74,6 +76,17 @@ func (prod *Product) FetchProductByProductId() (error) {
     return nil
 }
 
+func (event *Event) InsertEvent(tx *sql.Tx) error {
+    result, err := tx.Exec("insert into events (parent_id, eventType) values ($1, $2)",
+        event.parent_id, event.EventType);
+    if err != nil{
+        tx.Rollback()
+        return err
+    }
+    event.id, _ = result.LastInsertId();
+    return nil
+}
+
 func (prod *Product) InsertProduct() error {
     
     db, err := openLocalDb();
@@ -97,8 +110,8 @@ func (prod *Product) InsertProduct() error {
     
     //Cycle to insert referenced data
     for _, event := range prod.Terms.Events {
-        _, err := tx.Exec("insert into events (parent_id, eventType) values ($1, $2)",
-        prod.id, event.EventType);
+        event.parent_id = prod.id
+        err = event.InsertEvent(tx)
         if err != nil{
             tx.Rollback()
             return err
