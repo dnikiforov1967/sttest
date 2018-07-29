@@ -55,7 +55,10 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request) {
     var origId string = params["id"]
     product.Product_id = origId
     err := product.DeleteProductByProductId()
-    if err != nil {
+    if err == errhand.ErrProdNotFound {
+        http.Error(w, err.Error(), http.StatusNotFound)
+        return
+    } else if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }

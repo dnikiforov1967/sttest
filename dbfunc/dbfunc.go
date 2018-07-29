@@ -224,11 +224,20 @@ func (prod *Product) DeleteProductByProductId() error {
         tx.Rollback()
         return err
     }
-    _, err = tx.Exec("delete from products where product_id = $1", 
+    result, err := tx.Exec("delete from products where product_id = $1", 
         prod.Product_id);
     if err != nil{
         tx.Rollback()
         return err
+    }
+    count, err := result.RowsAffected()
+    if err != nil{
+        tx.Rollback()
+        return err
+    }
+    if count == 0 {
+        tx.Rollback()
+        return errhand.ErrProdNotFound
     }
     err = tx.Commit()
     if err != nil{
