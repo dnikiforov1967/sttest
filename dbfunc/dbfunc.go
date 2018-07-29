@@ -105,24 +105,31 @@ func (prod *Product) UpdateProduct(origId string) error {
     return nil
 }
 
-func (prod *Product) DeleteProductByProductId() {
+func (prod *Product) DeleteProductByProductId() error {
     
-    db, _ := openLocalDb()
+    db, err := openLocalDb()
+    if err != nil{
+        return err
+    }
 
     defer db.Close()
 
-    tx, _ := openTrans(db)
+    tx, err := openTrans(db)
+    if err != nil{
+        return err
+    }
 
-    _, err := tx.Exec("delete from products where product_id = $1", 
+    _, err = tx.Exec("delete from products where product_id = $1", 
         prod.Product_id);
     if err != nil{
         tx.Rollback()
-        panic(err)
+        return err
     }
     err = tx.Commit()
     if err != nil{
-        panic(err)
+        return err
     }
+    return nil
 }
 
 func (prod *Product) DeleteProduct() {

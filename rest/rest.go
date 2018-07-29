@@ -11,7 +11,7 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
     _ = json.NewDecoder(r.Body).Decode(&product)
     err := product.InsertProduct()
     if err != nil {
-        http.Error(w, err.Error(), 500)
+        http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
     json.NewEncoder(w).Encode(product);
@@ -23,10 +23,10 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
     product.Product_id = params["id"]
     err := product.FetchProductByProductId()
     if err == errhand.ErrProdNotFound {
-        http.Error(w, err.Error(), 404)
+        http.Error(w, err.Error(), http.StatusNotFound)
         return
     } else if err != nil {
-        http.Error(w, err.Error(), 500)
+        http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
     json.NewEncoder(w).Encode(product);
@@ -39,8 +39,21 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
     _ = json.NewDecoder(r.Body).Decode(&product)
     err := product.UpdateProduct(origId)
     if err != nil {
-        http.Error(w, err.Error(), 500)
+        http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
     json.NewEncoder(w).Encode(product);
+}
+
+func DeleteProduct(w http.ResponseWriter, r *http.Request) {
+    var product dbfunc.Product
+    params := mux.Vars(r)
+    var origId string = params["id"]
+    product.Product_id = origId
+    err := product.DeleteProductByProductId()
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    http.Error(w, "", http.StatusOK)
 }
