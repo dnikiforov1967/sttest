@@ -18,4 +18,12 @@ CREATE TABLE products(
     expirationDate TEXT NOT NULL
 );
 
+CREATE TABLE events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    parent_id INTEGER NOT NULL,
+    eventType TEXT NOT NULL,
+    FOREIGN KEY(parent_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+CREATE INDEX events_idx0 ON events(parent_id);
 
