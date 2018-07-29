@@ -78,15 +78,15 @@ func (prod *Product) InsertProduct() error {
     return nil
 }
 
-func (prod *Product) UpdateProduct() {
+func (prod *Product) UpdateProduct(origId string) {
     
     db, _ := openLocalDb();
 
     defer db.Close()
     tx, _ := openTrans(db)
 
-    _, err := tx.Exec("update products set name=$1, product_id=$2, category=$3, quanto=$4 where id=$5", 
-        prod.Name, prod.Product_id, prod.Category, prod.Quanto, prod.id);
+    _, err := tx.Exec("update products set name=$1, product_id=$2, category=$3, quanto=$4 where product_id=$5", 
+        prod.Name, prod.Product_id, prod.Category, prod.Quanto, origId);
     if err != nil{
         tx.Rollback()
         panic(err)

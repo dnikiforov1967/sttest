@@ -31,3 +31,12 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
     }
     json.NewEncoder(w).Encode(product);
 }
+
+func UpdateProduct(w http.ResponseWriter, r *http.Request) {
+    var product dbfunc.Product
+    params := mux.Vars(r)
+    var origId string = params["id"]
+    _ = json.NewDecoder(r.Body).Decode(&product)
+    product.UpdateProduct(origId)
+    json.NewEncoder(w).Encode(product);
+}
