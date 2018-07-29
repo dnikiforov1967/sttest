@@ -184,23 +184,3 @@ func (prod *Product) DeleteProductByProductId() error {
     }
     return nil
 }
-
-func (prod *Product) DeleteProduct() {
-    
-    db, _ := openLocalDb()
-
-    defer db.Close()
-
-    tx, _ := openTrans(db)
-
-    _, err := tx.Exec("delete from products where id = $1", 
-        prod.id);
-    if err != nil{
-        tx.Rollback()
-        panic(err)
-    }
-    err = tx.Commit()
-    if err != nil{
-        panic(err)
-    }
-}
