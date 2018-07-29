@@ -16,12 +16,12 @@ type Product struct {
     ExpirationDate string `json:"expirationDate,omitempty"`
 }
 
-func openLocalDb() *sql.DB {
+func openLocalDb() (*sql.DB, error) {
     db, err := sql.Open("sqlite3", "sttest.sqlt")
     if err != nil {
-        panic(err)
+        return nil, err
     }
-    return db;
+    return db, nil;
 }
 
 func openTrans(db *sql.DB) *sql.Tx {
@@ -33,11 +33,14 @@ func openTrans(db *sql.DB) *sql.Tx {
 }
 
 func (prod *Product) FetchProductByProductId() (error) {
-    db := openLocalDb();
+    db, err := openLocalDb();
+    if err != nil {
+        return err
+    }
     defer db.Close()
     row := db.QueryRow("select id, name, product_id, category, quanto, creationDate, expirationDate from products where product_id = $1",
     prod.Product_id);
-    err := row.Scan(&prod.id, &prod.Name, &prod.Product_id, &prod.Category, &prod.Quanto, &prod.CreationDate, &prod.ExpirationDate)
+    err = row.Scan(&prod.id, &prod.Name, &prod.Product_id, &prod.Category, &prod.Quanto, &prod.CreationDate, &prod.ExpirationDate)
     if err != nil {
         if err != sql.ErrNoRows {
             return err
@@ -50,7 +53,10 @@ func (prod *Product) FetchProductByProductId() (error) {
 
 func (prod *Product) InsertProduct() error {
     
-    db := openLocalDb();
+    db, err := openLocalDb();
+    if err != nil {
+        return err
+    }
 
     defer db.Close()
     tx := openTrans(db)
@@ -71,7 +77,7 @@ func (prod *Product) InsertProduct() error {
 
 func (prod *Product) UpdateProduct() {
     
-    db := openLocalDb();
+    db, _ := openLocalDb();
 
     defer db.Close()
     tx := openTrans(db)
@@ -91,7 +97,7 @@ func (prod *Product) UpdateProduct() {
 
 func (prod *Product) DeleteProductByProductId() {
     
-    db := openLocalDb()
+    db, _ := openLocalDb()
 
     defer db.Close()
 
@@ -111,7 +117,7 @@ func (prod *Product) DeleteProductByProductId() {
 
 func (prod *Product) DeleteProduct() {
     
-    db := openLocalDb()
+    db, _ := openLocalDb()
 
     defer db.Close()
 
