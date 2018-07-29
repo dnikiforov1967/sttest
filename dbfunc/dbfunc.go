@@ -14,6 +14,15 @@ type Product struct {
     Quanto bool `json:"quanto"`
     CreationDate string `json:"creationDate,omitempty"`
     ExpirationDate string `json:"expirationDate,omitempty"`
+    Terms TermsStruct `json:"terms"`
+}
+
+type TermsStruct struct {
+    Events []Event `json:"events"`
+}
+
+type Event struct {
+    EventType string `json:"type"`
 }
 
 func openLocalDb() (*sql.DB, error) {
@@ -47,7 +56,10 @@ func (prod *Product) FetchProductByProductId() (error) {
         } else {
             return errhand.ErrProdNotFound
         }
-    } 
+    }
+    var event Event = Event{"EXECUTION"}
+    prod.Terms = TermsStruct{}
+    prod.Terms.Events = append(prod.Terms.Events, event)
     return nil
 }
 
