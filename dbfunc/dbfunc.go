@@ -153,6 +153,12 @@ func (prod *Product) DeleteProductByProductId() error {
         return err
     }
 
+    _, err = tx.Exec("delete from events where parent_id in (select id from products where product_id = $1)", 
+        prod.Product_id);
+    if err != nil{
+        tx.Rollback()
+        return err
+    }
     _, err = tx.Exec("delete from products where product_id = $1", 
         prod.Product_id);
     if err != nil{
