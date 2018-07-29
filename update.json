@@ -1,0 +1,13 @@
+{
+"name":"A",
+"product_id":"3",
+"category":"C1",
+"quanto":false, 
+"creationDate":"2017-01-02",
+"expirationDate":"2018-01-02",
+"terms":{
+    "events":[
+        {"type":"OPEN"}
+        ]
+    }
+}

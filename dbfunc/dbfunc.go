@@ -43,6 +43,20 @@ func openTrans(db *sql.DB) (*sql.Tx, error) {
     return tx, nil;
 }
 
+func (prod *Product) findIdByProductId(tx *sql.Tx) error {
+    row := tx.QueryRow("select id from products where product_id = $1",
+    prod.Product_id);
+    err := row.Scan(&prod.id)
+    if err != nil {
+        if err != sql.ErrNoRows {
+            return err
+        } else {
+            return errhand.ErrProdNotFound
+        }
+    }
+    return nil
+}
+
 func (prod *Product) FetchProductByProductId() (error) {
     db, err := openLocalDb();
     if err != nil {
@@ -87,6 +101,19 @@ func (event *Event) InsertEvent(tx *sql.Tx) error {
     return nil
 }
 
+func (prod *Product) InsertEvents(tx *sql.Tx) error {
+    //Cycle to insert referenced data
+    for _, event := range prod.Terms.Events {
+        event.parent_id = prod.id
+        err := event.InsertEvent(tx)
+        if err != nil{
+            tx.Rollback()
+            return err
+        }
+    }
+    return nil
+}
+
 func (prod *Product) InsertProduct() error {
     
     db, err := openLocalDb();
@@ -109,18 +136,14 @@ func (prod *Product) InsertProduct() error {
     prod.id, _ = result.LastInsertId();
     
     //Cycle to insert referenced data
-    for _, event := range prod.Terms.Events {
-        event.parent_id = prod.id
-        err = event.InsertEvent(tx)
-        if err != nil{
-            tx.Rollback()
-            return err
-        }
+    err = prod.InsertEvents(tx)
+    if err != nil{
+        return err
     }
 
     err = tx.Commit()
     if err != nil{
-        panic(err)
+        return err
     }
     return nil
 }
@@ -138,8 +161,37 @@ func (prod *Product) UpdateProduct(origId string) error {
         return err
     }
 
-    _, err = tx.Exec("update products set name=$1, product_id=$2, category=$3, quanto=$4 where product_id=$5", 
+    result, err := tx.Exec("update products set name=$1, product_id=$2, category=$3, quanto=$4 where product_id=$5", 
         prod.Name, prod.Product_id, prod.Category, prod.Quanto, origId);
+    if err != nil{
+        tx.Rollback()
+        return err
+    }
+    count, err := result.RowsAffected()
+    if err != nil{
+        tx.Rollback()
+        return err
+    }
+    if count == 0 {
+        tx.Rollback()
+        return errhand.ErrProdNotFound
+    }
+
+    //Find productId
+    err = prod.findIdByProductId(tx)
+    if err != nil {
+        tx.Rollback()
+        return err
+    }
+
+    //Remove old events
+    _, err = tx.Exec("delete from events where parent_id=$1", prod.id);
+    if err != nil{
+        tx.Rollback()
+        return err
+    }
+    //Cycle to insert referenced data
+    err = prod.InsertEvents(tx)
     if err != nil{
         tx.Rollback()
         return err

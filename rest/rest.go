@@ -38,7 +38,10 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
     var origId string = params["id"]
     _ = json.NewDecoder(r.Body).Decode(&product)
     err := product.UpdateProduct(origId)
-    if err != nil {
+    if err == errhand.ErrProdNotFound {
+        http.Error(w, err.Error(), http.StatusNotFound)
+        return
+    } else if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }

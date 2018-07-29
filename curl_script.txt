@@ -1,6 +1,6 @@
 curl -XPOST -H'Accept: application/json' -H'Content-Type: application/json' -d'{"name":"A","product_id":"1","category":"C","quanto":true, "creationDate":"2017-01-01","expirationDate":"2018-01-01"}' -D- http://localhost:8080/product
 
-curl -XPUT -H'Accept: application/json' -H'Content-Type: application/json' -d'{"name":"A","product_id":"1","category":"C1","quanto":true, "creationDate":"2017-01-02","expirationDate":"2018-01-02"}' -D- http://localhost:8080/product
+curl -XPUT -H'Accept: application/json' -H'Content-Type: application/json' -d'{"name":"A","product_id":"1","category":"C1","quanto":true, "creationDate":"2017-01-02","expirationDate":"2018-01-02"}' -D- http://localhost:8080/product/1
 
 curl -XGET -H'Accept: application/json' -D- http://localhost:8080/product/1
 
