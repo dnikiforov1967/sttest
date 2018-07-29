@@ -62,5 +62,5 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request) {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
-    http.Error(w, "", http.StatusOK)
+    w.WriteHeader(http.StatusNoContent)
 }
