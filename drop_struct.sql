@@ -8,4 +8,5 @@
  * Created: 28.07.2018
  */
 
+DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS products;
