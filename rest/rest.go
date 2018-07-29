@@ -14,6 +14,7 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
+    w.WriteHeader(http.StatusCreated)
     json.NewEncoder(w).Encode(product);
 }
 
