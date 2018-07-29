@@ -8,12 +8,12 @@ import (
 
 type Product struct {
     id int64
-    Name string `json:"name,omitempty"`
-    Product_id string `json:"product_id,omitempty"`
-    Category string `json:"category,omitempty"`
+    Name string `json:"name"`
+    Product_id string `json:"product_id"`
+    Category string `json:"category"`
     Quanto bool `json:"quanto"`
-    CreationDate string `json:"creationDate,omitempty"`
-    ExpirationDate string `json:"expirationDate,omitempty"`
+    CreationDate string `json:"creationDate"`
+    ExpirationDate string `json:"expirationDate"`
     Terms TermsStruct `json:"terms"`
 }
 
@@ -57,9 +57,20 @@ func (prod *Product) FetchProductByProductId() (error) {
             return errhand.ErrProdNotFound
         }
     }
-    var event Event = Event{"EXECUTION"}
+    rows, err := db.Query("select eventType from events where parent_id = $1", prod.id);
+    if err != nil {
+        return err
+    }
+    defer rows.Close()
     prod.Terms = TermsStruct{}
-    prod.Terms.Events = append(prod.Terms.Events, event)
+    for rows.Next(){
+        event := Event{}
+        err := rows.Scan(&event.EventType)
+        if err != nil {
+            return err
+        }
+        prod.Terms.Events = append(prod.Terms.Events, event)
+    }
     return nil
 }
 
@@ -83,6 +94,17 @@ func (prod *Product) InsertProduct() error {
         return err
     }
     prod.id, _ = result.LastInsertId();
+    
+    //Cycle to insert referenced data
+    for _, event := range prod.Terms.Events {
+        _, err := tx.Exec("insert into events (parent_id, eventType) values ($1, $2)",
+        prod.id, event.EventType);
+        if err != nil{
+            tx.Rollback()
+            return err
+        }
+    }
+
     err = tx.Commit()
     if err != nil{
         panic(err)
