@@ -37,6 +37,10 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
     params := mux.Vars(r)
     var origId string = params["id"]
     _ = json.NewDecoder(r.Body).Decode(&product)
-    product.UpdateProduct(origId)
+    err := product.UpdateProduct(origId)
+    if err != nil {
+        http.Error(w, err.Error(), 500)
+        return
+    }
     json.NewEncoder(w).Encode(product);
 }

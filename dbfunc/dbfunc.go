@@ -78,24 +78,31 @@ func (prod *Product) InsertProduct() error {
     return nil
 }
 
-func (prod *Product) UpdateProduct(origId string) {
+func (prod *Product) UpdateProduct(origId string) error {
     
-    db, _ := openLocalDb();
+    db, err := openLocalDb();
+    if err != nil {
+        return err
+    }
 
     defer db.Close()
-    tx, _ := openTrans(db)
+    tx, err := openTrans(db)
+    if err != nil {
+        return err
+    }
 
-    _, err := tx.Exec("update products set name=$1, product_id=$2, category=$3, quanto=$4 where product_id=$5", 
+    _, err = tx.Exec("update products set name=$1, product_id=$2, category=$3, quanto=$4 where product_id=$5", 
         prod.Name, prod.Product_id, prod.Category, prod.Quanto, origId);
     if err != nil{
         tx.Rollback()
-        panic(err)
+        return err
     }
 
     err = tx.Commit()
     if err != nil{
-        panic(err)
+        return err
     }
+    return nil
 }
 
 func (prod *Product) DeleteProductByProductId() {
