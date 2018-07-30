@@ -5,8 +5,13 @@ import "net/http"
 import "github.com/gorilla/mux"
 import "./rest"
 import "./asyncservice"
+import "./config"
 
 func main() {
+	
+	//Read standard configuration
+	config.GlobalConfig.ReadFromFile("./config.json")
+
     router := mux.NewRouter().StrictSlash(true)
     router.HandleFunc("/product", rest.CreateProduct).Methods("POST")
     router.HandleFunc("/product/{id}", rest.GetProduct).Methods("GET")

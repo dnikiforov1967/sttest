@@ -1,9 +1,21 @@
 package config
 
+import (
+	"io/ioutil"
+	"log"
+	"encoding/json"
+)
+
 type ConfigStruct struct {
-	timeout int `json:"timeout"`
+	Timeout int64 `json:"timeout"`
 }
 
-func (conf *ConfigStruct) readFromFile(fileName string) error {
-	return nil
+var GlobalConfig ConfigStruct = ConfigStruct{}
+
+func (conf *ConfigStruct) ReadFromFile(fileName string) {
+	file, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	json.Unmarshal(file, conf)
 }

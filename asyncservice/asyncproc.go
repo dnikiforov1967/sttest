@@ -4,6 +4,7 @@ import "sync"
 import "time"
 import "fmt"
 import "math"
+import "../config"
 
 type TaskResponse struct {
 	Id uint64 `json:"id"`
@@ -81,10 +82,9 @@ func proceed(id uint64, isin string, underlying float64, volatility float64, sig
 
 func checkTimeOut(initTime *time.Time) bool {
 	duration := time.Since(*initTime)
-	var millisec int64 = duration.Nanoseconds()
-	var limit int64 = 7000000000;
+	var millisec int64 = duration.Nanoseconds()/1000000
 	fmt.Println("Milli ", millisec)
-	if millisec >= limit {
+	if millisec >= config.GlobalConfig.Timeout {
 		return true
 	}
 	return false
