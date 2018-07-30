@@ -14,7 +14,7 @@ func (prod *Product) findIdByProductId(tx *sql.Tx) error {
         if err != sql.ErrNoRows {
             return err
         } else {
-            return errhand.ErrProdNotFound
+            return errhand.ProdNotFound
         }
     }
     return nil
@@ -33,7 +33,7 @@ func (prod *Product) FetchProductByProductId() (error) {
         if err != sql.ErrNoRows {
             return err
         } else {
-            return errhand.ErrProdNotFound
+            return errhand.ProdNotFound
         }
     }
     rows, err := db.Query("select eventType, terminal, kind, origin, execType, path, cashType, paymentType, method, algorithmId from events where parent_id = $1", prod.id);
@@ -127,7 +127,7 @@ func (prod *Product) UpdateProduct(origId string) error {
     }
     if count == 0 {
         tx.Rollback()
-        return errhand.ErrProdNotFound
+        return errhand.ProdNotFound
     }
 
     //Find productId
@@ -190,7 +190,7 @@ func (prod *Product) DeleteProductByProductId() error {
     }
     if count == 0 {
         tx.Rollback()
-        return errhand.ErrProdNotFound
+        return errhand.ProdNotFound
     }
     err = tx.Commit()
     if err != nil{

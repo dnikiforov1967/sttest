@@ -5,6 +5,7 @@ import "time"
 import "fmt"
 import "math"
 import "../config"
+import "../errhand"
 
 type TaskResponse struct {
 	Id uint64 `json:"id"`
@@ -38,17 +39,6 @@ func initiateTaskMap() map[uint64]*TaskResponse {
 			}
 	}
 }
-
-type asyncError struct {
-	message string
-}
-
-func (err asyncError) Error() string {
-	return err.message
-}
-
-var TaskNotFound asyncError = asyncError{"Task not found"}
-var TaskCanselledByTimeOut asyncError = asyncError{"Task cancelled by timeout"}
 
 func proceed(id uint64, isin string, underlying float64, volatility float64, signalChan chan int) {
 	respMap := initiateTaskMap();
@@ -96,6 +86,6 @@ func getTaskState(id uint64) (TaskResponse, error) {
 	if ok {
 		return *val, nil
 	} else {
-		return *val, TaskNotFound
+		return *val, errhand.TaskNotFound
 	}
 }

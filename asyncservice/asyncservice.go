@@ -4,6 +4,7 @@ import "net/http"
 import "encoding/json"
 import "strconv"
 import "github.com/gorilla/mux"
+import "../errhand"
 
 func AcceptPriceRequest(w http.ResponseWriter, r *http.Request) {
 	priceRequest := PriceRequest{}
@@ -22,11 +23,11 @@ func WaitPriceRequest(w http.ResponseWriter, r *http.Request) {
 	signalChan := make(chan int)
 	go proceed(taskId, priceRequest.Isin, priceRequest.Underlying, priceRequest.Volatility, signalChan)
 	if signal := <- signalChan; signal == -1 {
-		http.Error(w, TaskCanselledByTimeOut.Error(), http.StatusServiceUnavailable)
+		http.Error(w, errhand.TaskCanselledByTimeOut.Error(), http.StatusServiceUnavailable)
         return
 	}
     response, err := getTaskState(taskId)
-    if err == TaskNotFound {
+    if err == errhand.TaskNotFound {
         http.Error(w, err.Error(), http.StatusNotFound)
         return
     } else if err != nil {
@@ -45,7 +46,7 @@ func ReturnTaskRequest(w http.ResponseWriter, r *http.Request) {
         return
     }
 	response, err := getTaskState(taskId)
-    if err == TaskNotFound {
+    if err == errhand.TaskNotFound {
         http.Error(w, err.Error(), http.StatusNotFound)
         return
     } else if err != nil {

@@ -23,7 +23,7 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
     var product dbfunc.Product
     product.Product_id = params["id"]
     err := product.FetchProductByProductId()
-    if err == errhand.ErrProdNotFound {
+    if err == errhand.ProdNotFound {
         http.Error(w, err.Error(), http.StatusNotFound)
         return
     } else if err != nil {
@@ -39,7 +39,7 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
     var origId string = params["id"]
     _ = json.NewDecoder(r.Body).Decode(&product)
     err := product.UpdateProduct(origId)
-    if err == errhand.ErrProdNotFound {
+    if err == errhand.ProdNotFound {
         http.Error(w, err.Error(), http.StatusNotFound)
         return
     } else if err != nil {
@@ -55,7 +55,7 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request) {
     var origId string = params["id"]
     product.Product_id = origId
     err := product.DeleteProductByProductId()
-    if err == errhand.ErrProdNotFound {
+    if err == errhand.ProdNotFound {
         http.Error(w, err.Error(), http.StatusNotFound)
         return
     } else if err != nil {
