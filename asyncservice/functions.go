@@ -3,8 +3,77 @@ package asyncservice
 import "net/http"
 import "encoding/json"
 import "strconv"
+import "time"
+import "fmt"
+import "math"
 import "github.com/gorilla/mux"
 import "../errhand"
+import "../config"
+
+func initiateTaskMap() map[uint64]*TaskResponse {
+	if (taskMap != nil) {
+		return taskMap
+	} else {
+		    mapLock.Lock()
+			defer mapLock.Unlock()
+			if (taskMap != nil) {
+				return taskMap
+			} else {
+				taskMap = make(map[uint64]*TaskResponse)
+				return taskMap
+			}
+	}
+}
+
+func proceed(id uint64, isin string, underlying float64, volatility float64, signalChan chan int) {
+	respMap := initiateTaskMap();
+	response := TaskResponse{id, isin, StatusInProgress, 0, ""}
+	respMap[id] = &response;
+
+	initTime := time.Now()
+	
+	//Summary time ~ 5 sec
+	for i := 0; i<10; i++ {
+		//Here we simulate steps of price calculation
+		fmt.Println("Step ", i)
+		timer := time.NewTimer(500 * time.Millisecond)
+		<- timer.C
+		if checkTimeOut(&initTime) {
+			response.Status = StatusTimedOut
+			if signalChan != nil {
+				signalChan <- -1
+			}
+			break;
+		}
+	}
+	//Normal commitment
+	response.Status = StatusCompleted
+	response.Price = math.Round(underlying*volatility*100000)/100
+	response.PriceDate = time.Now().Format(time.RFC3339)
+	if signalChan != nil {
+		signalChan <- 0
+	}
+}
+
+func checkTimeOut(initTime *time.Time) bool {
+	duration := time.Since(*initTime)
+	var millisec int64 = duration.Nanoseconds()/1000000
+	fmt.Println("Milli ", millisec)
+	if millisec >= config.GlobalConfig.Timeout {
+		return true
+	}
+	return false
+}
+
+func getTaskState(id uint64) (TaskResponse, error) {
+	respMap := initiateTaskMap();
+	val, ok := respMap[id];
+	if ok {
+		return *val, nil
+	} else {
+		return *val, errhand.TaskNotFound
+	}
+}
 
 func AcceptPriceRequest(w http.ResponseWriter, r *http.Request) {
 	priceRequest := PriceRequest{}

@@ -1,7 +1,5 @@
 package asyncservice
 
-import "sync/atomic"
-
 type AsyncResponse struct {
     ResourcePath string `json:"resource"`
 }
@@ -16,9 +14,12 @@ type taskCounter struct {
 	counter uint64
 }
 
-
-func (tc *taskCounter) getTaskId() uint64 {
-	return atomic.AddUint64(&tc.counter,1)
+type TaskResponse struct {
+	Id uint64 `json:"id"`
+	Isin string `json:"isin"`
+    Status string `json:"status"`
+	Price float64 `json:"price"`
+	PriceDate string `json:"date"`
 }
 
-var TaskCounter taskCounter = taskCounter{0}
+
