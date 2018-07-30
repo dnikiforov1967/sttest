@@ -52,23 +52,33 @@ func proceed(id uint64, isin string, signalChan chan int) {
 	response := TaskResponse{id, isin, StatusInProgress, 0, ""}
 	respMap[id] = &response;
 
-	count := 0;
-	ticker := time.NewTicker(500 * time.Millisecond)
-	defer ticker.Stop()
-	for t := range ticker.C {
-		count++
-		fmt.Println("ticker ", t, count)
-		if count > 9 {
-			response.Status = StatusCompleted
-			response.Price = 99.12
-			response.PriceDate = t.Format(time.RFC3339)
-			break;
-		}
+	initTime := time.Now()
+	
+	//Summary time ~ 5 sec
+	for i := 0; i<10; i++ {
+		//Here we simulate steps of price calculation
+		fmt.Println("Step ", i)
+		timer := time.NewTimer(500 * time.Millisecond)
+		<- timer.C
+		checkTimeOut(&initTime)
 	}
+	//Normal commitment
+	response.Status = StatusCompleted
+	response.Price = 99.12
+	response.PriceDate = time.Now().Format(time.RFC3339)
 	if signalChan != nil {
 		signalChan <- 0
 	}
+}
 
+func checkTimeOut(initTime *time.Time) bool {
+	duration := time.Since(*initTime)
+	fmt.Println("Duration ", duration)
+	millisec := duration/1000000
+	if millisec > 10000 {
+		return true
+	}
+	return false
 }
 
 func getTaskState(id uint64) (TaskResponse, error) {
