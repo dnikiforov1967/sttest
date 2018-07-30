@@ -13,5 +13,6 @@ func main() {
     router.HandleFunc("/product/{id}", rest.UpdateProduct).Methods("PUT")
     router.HandleFunc("/product/{id}", rest.DeleteProduct).Methods("DELETE")
     router.HandleFunc("/price", asyncservice.AcceptPriceRequest).Methods("POST")
+	router.HandleFunc("/price/{id}", asyncservice.ReturnTaskRequest).Methods("GET")
     log.Fatal(http.ListenAndServe(":8080", router))
 }
