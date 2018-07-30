@@ -46,6 +46,7 @@ func (err asyncError) Error() string {
 }
 
 var TaskNotFound asyncError = asyncError{"Task not found"}
+var TaskCanselledByTimeOut asyncError = asyncError{"Task cancelled by timeout"}
 
 func proceed(id uint64, isin string, signalChan chan int) {
 	respMap := initiateTaskMap();
@@ -60,7 +61,13 @@ func proceed(id uint64, isin string, signalChan chan int) {
 		fmt.Println("Step ", i)
 		timer := time.NewTimer(500 * time.Millisecond)
 		<- timer.C
-		checkTimeOut(&initTime)
+		if checkTimeOut(&initTime) {
+			response.Status = StatusTimedOut
+			if signalChan != nil {
+				signalChan <- -1
+			}
+			
+		}
 	}
 	//Normal commitment
 	response.Status = StatusCompleted
@@ -74,8 +81,7 @@ func proceed(id uint64, isin string, signalChan chan int) {
 func checkTimeOut(initTime *time.Time) bool {
 	duration := time.Since(*initTime)
 	fmt.Println("Duration ", duration)
-	millisec := duration/1000000
-	if millisec > 10000 {
+	if duration > 2000*1000000 {
 		return true
 	}
 	return false

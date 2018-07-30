@@ -18,11 +18,13 @@ func AcceptPriceRequest(w http.ResponseWriter, r *http.Request) {
 func WaitPriceRequest(w http.ResponseWriter, r *http.Request) {
 	priceRequest := PriceRequest{}
 	_ = json.NewDecoder(r.Body).Decode(&priceRequest)
-    w.WriteHeader(http.StatusAccepted)
 	taskId := TaskCounter.getTaskId();
 	signalChan := make(chan int)
 	go proceed(taskId, priceRequest.Isin, signalChan)
-	<- signalChan
+	if signal := <- signalChan; signal == -1 {
+		http.Error(w, TaskCanselledByTimeOut.Error(), http.StatusServiceUnavailable)
+        return
+	}
     response, err := getTaskState(taskId)
     if err == TaskNotFound {
         http.Error(w, err.Error(), http.StatusNotFound)
