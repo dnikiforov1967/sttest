@@ -23,7 +23,7 @@
 					"payment": {
 						"type": "X-TYPE",
 						"method": "X-METHOD",
-						"algorithm": "X-ALGO"
+						"algorithmId": "X-ALGO"
 					}					
 				}
 			},
@@ -43,7 +43,7 @@
 					"payment": {
 						"type": "Z-TYPE",
 						"method": "Z-METHOD",
-						"algorithm": "Z-ALGO"
+						"algorithmId": "Z-ALGO"
 					}					
 				}				
 			}

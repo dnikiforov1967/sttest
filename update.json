@@ -1,32 +1,31 @@
 {
-	"name": "A",
-	"product_id": "3",
-	"category": "C1",
-	"quanto": false, 
-	"creationDate": "2017-01-02",
-	"expirationDate": "2018-01-02",
+	"name": "FX_Res_Knock_Into_FW_Imp_eu",
+	"product_id": "FX_Res_Knock_Into_FW_Imp_eu",
+	"category": "Tx-based OTC",
+	"quanto": true,
+	"creationDate": "2018-05-25",
+	"expirationDate": "2020-05-25",
 	"terms": {
-		"events": [
-			{
-				"type": "OPEN",
+		"events": [{
+				"type": "EXECUTION",
 				"terminal": true,
 				"execution": {
 					"on": {
-						"kind": "N/A"
-					},					
-					"origin": "USA",
-					"type": "CLOSE"
+						"kind": "SCHEDULE"
+					},
+					"origin": "EUROPEAN",
+					"type": "EXECUTION"
 				},
-				"cashDirection" : {
-					"path": "TO_BANK",
+				"cashDirection": {
+					"path": "TO_INVESTOR",
 					"type": "CASH",
 					"payment": {
-						"type": "Y-TYPE",
-						"method": "Y-METHOD",
-						"algorithm": "Y-ALGO"
-					}					
-				}				
-			}
-		]
+						"type": "TRIGGER_PRICE",
+						"method": "ALGORITHM",
+						"algorithmId": "FX_Res_Knock_Into_FW_Imp_eu"
+					}
+				}
+			}]
 	}
 }
+
