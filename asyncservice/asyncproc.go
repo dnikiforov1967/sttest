@@ -66,7 +66,7 @@ func proceed(id uint64, isin string, signalChan chan int) {
 			if signalChan != nil {
 				signalChan <- -1
 			}
-			
+			break;
 		}
 	}
 	//Normal commitment
@@ -80,8 +80,10 @@ func proceed(id uint64, isin string, signalChan chan int) {
 
 func checkTimeOut(initTime *time.Time) bool {
 	duration := time.Since(*initTime)
-	fmt.Println("Duration ", duration)
-	if duration > 2000*1000000 {
+	var millisec int64 = duration.Nanoseconds()
+	var limit int64 = 2000000000;
+	fmt.Println("Milli ", millisec)
+	if millisec >= limit {
 		return true
 	}
 	return false
