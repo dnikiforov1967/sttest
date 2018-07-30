@@ -47,7 +47,7 @@ func (err asyncError) Error() string {
 
 var TaskNotFound asyncError = asyncError{"Task not found"}
 
-func proceed(id uint64, isin string) {
+func proceed(id uint64, isin string, signalChan chan int) {
 	respMap := initiateTaskMap();
 	response := TaskResponse{id, isin, StatusInProgress, 0, ""}
 	respMap[id] = &response;
@@ -64,6 +64,9 @@ func proceed(id uint64, isin string) {
 			response.PriceDate = t.Format(time.RFC3339)
 			break;
 		}
+	}
+	if signalChan != nil {
+		signalChan <- 0
 	}
 
 }
