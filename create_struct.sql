@@ -22,6 +22,15 @@ CREATE TABLE events (
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
     parent_id INTEGER NOT NULL,
     eventType TEXT NOT NULL,
+	terminal NUMERIC NOT NULL,
+	kind TEXT NOT NULL,
+	origin TEXT NOT NULL,
+	execType TEXT NOT NULL,
+	path TEXT NOT NULL,
+	cashType TEXT NOT NULL,
+	paymentType TEXT NOT NULL,
+	method TEXT NOT NULL,
+	algorithm TEXT NOT NULL,
     FOREIGN KEY(parent_id) REFERENCES products(id) ON DELETE CASCADE
 );
 

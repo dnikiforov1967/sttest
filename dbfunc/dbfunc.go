@@ -25,6 +25,31 @@ type Event struct {
     id int64
     parent_id int64
     EventType string `json:"type"`
+	Terminal bool `json:"terminal"`
+	ExecutionStruct `json:"execution"`
+	CashDirection `json:"cashDirection"`
+}
+
+type ExecutionStruct struct {
+	OnStruct `json:"on"`
+	Origin string `json:"origin"`
+	ExecType string `json:"type"`
+}
+
+type OnStruct struct {
+	Kind string `json:"kind"`
+}
+
+type CashDirection struct {
+	Path string `json:"path"`
+	CashType string `json:"type"`
+	Payment `json:"payment"`
+}
+
+type Payment struct {
+	PaymentType string `json:"type"`
+	Method string `json:"method"`
+	Algorithm string `json:"algorithm"`
 }
 
 func openLocalDb() (*sql.DB, error) {
@@ -73,7 +98,7 @@ func (prod *Product) FetchProductByProductId() (error) {
             return errhand.ErrProdNotFound
         }
     }
-    rows, err := db.Query("select eventType from events where parent_id = $1", prod.id);
+    rows, err := db.Query("select eventType, terminal, kind, origin, execType, path, cashType, paymentType, method, algorithm from events where parent_id = $1", prod.id);
     if err != nil {
         return err
     }
@@ -81,7 +106,8 @@ func (prod *Product) FetchProductByProductId() (error) {
     prod.Terms = TermsStruct{}
     for rows.Next(){
         event := Event{}
-        err := rows.Scan(&event.EventType)
+        err := rows.Scan(&event.EventType, &event.Terminal, &event.Kind, &event.Origin,
+				&event.ExecType, &event.Path, &event.CashType, &event.PaymentType, &event.Method, &event.Algorithm);
         if err != nil {
             return err
         }
@@ -91,8 +117,9 @@ func (prod *Product) FetchProductByProductId() (error) {
 }
 
 func (event *Event) InsertEvent(tx *sql.Tx) error {
-    result, err := tx.Exec("insert into events (parent_id, eventType) values ($1, $2)",
-        event.parent_id, event.EventType);
+    result, err := tx.Exec("insert into events (parent_id, eventType, terminal, kind, origin, execType, path, cashType, paymentType, method, algorithm) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+        event.parent_id, event.EventType, event.Terminal, event.Kind, event.Origin, event.ExecType,
+				 event.Path, event.CashType, event.PaymentType, event.Method, event.Algorithm);
     if err != nil{
         tx.Rollback()
         return err

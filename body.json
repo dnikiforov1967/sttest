@@ -1,14 +1,52 @@
 {
-"name":"A",
-"product_id":"3",
-"category":"C1",
-"quanto":true, 
-"creationDate":"2017-01-02",
-"expirationDate":"2018-01-02",
-"terms":{
-    "events":[
-        {"type":"CLOSE"},
-        {"type":"EXECUTION"}
-        ]
-    }
+	"name": "A",
+	"product_id": "3",
+	"category": "C1",
+	"quanto": true, 
+	"creationDate": "2017-01-02",
+	"expirationDate": "2018-01-02",
+	"terms": {
+		"events": [
+			{
+				"type": "CLOSE",
+				"terminal": true,
+				"execution": {
+					"on": {
+						"kind": "SCHEDULE"
+					},
+					"origin": "USA",
+					"type": "CLOSE"	
+				},
+				"cashDirection" : {
+					"path": "TO_INVESTOR",
+					"type": "CASH",
+					"payment": {
+						"type": "X-TYPE",
+						"method": "X-METHOD",
+						"algorithm": "X-ALGO"
+					}					
+				}
+			},
+			{
+				"type": "EXECUTION",
+				"terminal": false,	
+				"execution": {
+					"on": {
+						"kind": "IMMEDIATE"
+					},					
+					"origin": "EUROPEAN",
+					"type": "EXECUTION"	
+				},
+				"cashDirection" : {
+					"path": "TO_BANK",
+					"type": "STOCK",
+					"payment": {
+						"type": "Z-TYPE",
+						"method": "Z-METHOD",
+						"algorithm": "Z-ALGO"
+					}					
+				}				
+			}
+		]
+	}
 }
