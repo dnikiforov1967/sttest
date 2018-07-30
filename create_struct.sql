@@ -30,7 +30,7 @@ CREATE TABLE events (
 	cashType TEXT NOT NULL,
 	paymentType TEXT NOT NULL,
 	method TEXT NOT NULL,
-	algorithm TEXT NOT NULL,
+	algorithmId TEXT NOT NULL,
     FOREIGN KEY(parent_id) REFERENCES products(id) ON DELETE CASCADE
 );
 

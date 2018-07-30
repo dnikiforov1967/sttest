@@ -49,7 +49,7 @@ type CashDirection struct {
 type Payment struct {
 	PaymentType string `json:"type"`
 	Method string `json:"method"`
-	Algorithm string `json:"algorithm"`
+	AlgorithmId string `json:"algorithmId"`
 }
 
 func openLocalDb() (*sql.DB, error) {
@@ -98,7 +98,7 @@ func (prod *Product) FetchProductByProductId() (error) {
             return errhand.ErrProdNotFound
         }
     }
-    rows, err := db.Query("select eventType, terminal, kind, origin, execType, path, cashType, paymentType, method, algorithm from events where parent_id = $1", prod.id);
+    rows, err := db.Query("select eventType, terminal, kind, origin, execType, path, cashType, paymentType, method, algorithmId from events where parent_id = $1", prod.id);
     if err != nil {
         return err
     }
@@ -107,7 +107,7 @@ func (prod *Product) FetchProductByProductId() (error) {
     for rows.Next(){
         event := Event{}
         err := rows.Scan(&event.EventType, &event.Terminal, &event.Kind, &event.Origin,
-				&event.ExecType, &event.Path, &event.CashType, &event.PaymentType, &event.Method, &event.Algorithm);
+				&event.ExecType, &event.Path, &event.CashType, &event.PaymentType, &event.Method, &event.AlgorithmId);
         if err != nil {
             return err
         }
@@ -117,9 +117,9 @@ func (prod *Product) FetchProductByProductId() (error) {
 }
 
 func (event *Event) InsertEvent(tx *sql.Tx) error {
-    result, err := tx.Exec("insert into events (parent_id, eventType, terminal, kind, origin, execType, path, cashType, paymentType, method, algorithm) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+    result, err := tx.Exec("insert into events (parent_id, eventType, terminal, kind, origin, execType, path, cashType, paymentType, method, algorithmId) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
         event.parent_id, event.EventType, event.Terminal, event.Kind, event.Origin, event.ExecType,
-				 event.Path, event.CashType, event.PaymentType, event.Method, event.Algorithm);
+				 event.Path, event.CashType, event.PaymentType, event.Method, event.AlgorithmId);
     if err != nil{
         tx.Rollback()
         return err
