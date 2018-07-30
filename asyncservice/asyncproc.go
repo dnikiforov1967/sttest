@@ -3,6 +3,7 @@ package asyncservice
 import "sync"
 import "time"
 import "fmt"
+import "math"
 
 type TaskResponse struct {
 	Id uint64 `json:"id"`
@@ -48,7 +49,7 @@ func (err asyncError) Error() string {
 var TaskNotFound asyncError = asyncError{"Task not found"}
 var TaskCanselledByTimeOut asyncError = asyncError{"Task cancelled by timeout"}
 
-func proceed(id uint64, isin string, signalChan chan int) {
+func proceed(id uint64, isin string, underlying float64, volatility float64, signalChan chan int) {
 	respMap := initiateTaskMap();
 	response := TaskResponse{id, isin, StatusInProgress, 0, ""}
 	respMap[id] = &response;
@@ -71,7 +72,7 @@ func proceed(id uint64, isin string, signalChan chan int) {
 	}
 	//Normal commitment
 	response.Status = StatusCompleted
-	response.Price = 99.12
+	response.Price = math.Round(underlying*volatility*100000)/100
 	response.PriceDate = time.Now().Format(time.RFC3339)
 	if signalChan != nil {
 		signalChan <- 0
@@ -81,7 +82,7 @@ func proceed(id uint64, isin string, signalChan chan int) {
 func checkTimeOut(initTime *time.Time) bool {
 	duration := time.Since(*initTime)
 	var millisec int64 = duration.Nanoseconds()
-	var limit int64 = 2000000000;
+	var limit int64 = 7000000000;
 	fmt.Println("Milli ", millisec)
 	if millisec >= limit {
 		return true

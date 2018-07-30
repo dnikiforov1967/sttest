@@ -10,7 +10,7 @@ func AcceptPriceRequest(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&priceRequest)
     w.WriteHeader(http.StatusAccepted)
 	taskId := TaskCounter.getTaskId();
-	go proceed(taskId, priceRequest.Isin, nil)
+	go proceed(taskId, priceRequest.Isin, priceRequest.Underlying, priceRequest.Volatility, nil)
     response := AsyncResponse{"price/"+strconv.FormatUint(taskId,10)}
     json.NewEncoder(w).Encode(response);
 }
@@ -20,7 +20,7 @@ func WaitPriceRequest(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&priceRequest)
 	taskId := TaskCounter.getTaskId();
 	signalChan := make(chan int)
-	go proceed(taskId, priceRequest.Isin, signalChan)
+	go proceed(taskId, priceRequest.Isin, priceRequest.Underlying, priceRequest.Volatility, signalChan)
 	if signal := <- signalChan; signal == -1 {
 		http.Error(w, TaskCanselledByTimeOut.Error(), http.StatusServiceUnavailable)
         return
