@@ -1,3 +1,5 @@
 {
-    "ISDN": "67462"
+    "isin": "67462",
+	"underlying": 177.82,
+	"volatility": 0.818
 }
