@@ -1,6 +1,8 @@
 package asyncservice
 
 import "sync"
+import "time"
+import "fmt"
 
 type TaskResponse struct {
 	Id uint64 `json:"id"`
@@ -16,11 +18,11 @@ const StatusFailed string = "FAILED"
 const StatusTimedOut string = "TIMED OUT"
 
 var ( 
-	taskMap map[uint64]TaskResponse
+	taskMap map[uint64]*TaskResponse
 	mapLock sync.Mutex
 )
 
-func initiateTaskMap() map[uint64]TaskResponse {
+func initiateTaskMap() map[uint64]*TaskResponse {
 	if (taskMap != nil) {
 		return taskMap
 	} else {
@@ -29,7 +31,7 @@ func initiateTaskMap() map[uint64]TaskResponse {
 			if (taskMap != nil) {
 				return taskMap
 			} else {
-				taskMap = make(map[uint64]TaskResponse)
+				taskMap = make(map[uint64]*TaskResponse)
 				return taskMap
 			}
 	}
@@ -48,15 +50,30 @@ var TaskNotFound asyncError = asyncError{"Task not found"}
 func proceed(id uint64, isin string) {
 	respMap := initiateTaskMap();
 	response := TaskResponse{id, isin, StatusInProgress, 0, ""}
-	respMap[id] = response;
+	respMap[id] = &response;
+
+	count := 0;
+	ticker := time.NewTicker(500 * time.Millisecond)
+	defer ticker.Stop()
+	for t := range ticker.C {
+		count++
+		fmt.Println("ticker ", t, count)
+		if count > 9 {
+			response.Status = StatusCompleted
+			response.Price = 99.12
+			response.PriceDate = t.Format(time.RFC3339)
+			break;
+		}
+	}
+
 }
 
 func getTaskState(id uint64) (TaskResponse, error) {
 	respMap := initiateTaskMap();
 	val, ok := respMap[id];
 	if ok {
-		return val, nil
+		return *val, nil
 	} else {
-		return val, TaskNotFound
+		return *val, TaskNotFound
 	}
 }
