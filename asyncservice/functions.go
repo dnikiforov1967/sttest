@@ -14,7 +14,6 @@ import "log"
 func initiateTaskMap() map[uint64]*TaskResponse {
 	tempRef := mapAccess.Load()
 	if tempRef!=nil {
-		log.Printf("Map is already initialized")
 		return *tempRef.(*map[uint64]*TaskResponse)
 	} else {
 		    mapLock.Lock()
@@ -24,7 +23,6 @@ func initiateTaskMap() map[uint64]*TaskResponse {
 				log.Printf("Map is already initialized")
 				return *tempRef.(*map[uint64]*TaskResponse)
 			} else {
-				log.Printf("Map should be initialized")
 				taskMap := make(map[uint64]*TaskResponse)
 				mapAccess.Store(&taskMap)
 				return taskMap
@@ -42,7 +40,6 @@ func proceed(id uint64, isin string, underlying float64, volatility float64, sig
 	//Summary time ~ 5 sec
 	for i := 0; i<10; i++ {
 		//Here we simulate steps of price calculation
-		fmt.Println("Step ", i)
 		timer := time.NewTimer(500 * time.Millisecond)
 		<- timer.C
 		if checkTimeOut(&initTime) {
@@ -65,7 +62,6 @@ func proceed(id uint64, isin string, underlying float64, volatility float64, sig
 func checkTimeOut(initTime *time.Time) bool {
 	duration := time.Since(*initTime)
 	var millisec int64 = duration.Nanoseconds()/1000000
-	fmt.Println("Milli ", millisec)
 	if millisec >= config.GlobalConfig.Timeout {
 		return true
 	}
