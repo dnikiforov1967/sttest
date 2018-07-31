@@ -4,7 +4,7 @@ import "time"
 
 type AccessLimitStruct struct {
 	ClientId string `json:"clientId"`
-	Limiit int32 `json:"limit"`
+	Limit int64 `json:"limit"`
 }
 
 type accessTrackingStruct struct {
