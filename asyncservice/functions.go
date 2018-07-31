@@ -9,18 +9,22 @@ import "math"
 import "github.com/gorilla/mux"
 import "../errhand"
 import "../config"
+import "log"
 
 func initiateTaskMap() map[uint64]*TaskResponse {
 	tempRef := mapAccess.Load()
 	if tempRef!=nil {
+		log.Printf("Map is already initialized")
 		return *tempRef.(*map[uint64]*TaskResponse)
 	} else {
 		    mapLock.Lock()
 			defer mapLock.Unlock()
 			tempRef = mapAccess.Load()
 			if (tempRef != nil) {
+				log.Printf("Map is already initialized")
 				return *tempRef.(*map[uint64]*TaskResponse)
 			} else {
+				log.Printf("Map should be initialized")
 				taskMap := make(map[uint64]*TaskResponse)
 				mapAccess.Store(&taskMap)
 				return taskMap
