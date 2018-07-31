@@ -13,12 +13,13 @@ func main() {
 	config.GlobalConfig.ReadFromFile("./config.json")
 
     router := mux.NewRouter().StrictSlash(true)
+	priceRtr := router.PathPrefix("/price").Subrouter().StrictSlash(true)
     router.HandleFunc("/product", rest.CreateProduct).Methods("POST")
     router.HandleFunc("/product/{id}", rest.GetProduct).Methods("GET")
     router.HandleFunc("/product/{id}", rest.UpdateProduct).Methods("PUT")
     router.HandleFunc("/product/{id}", rest.DeleteProduct).Methods("DELETE")
-    router.HandleFunc("/price", asyncservice.AcceptPriceRequest).Methods("POST")
-	router.HandleFunc("/price/{id}", asyncservice.ReturnTaskRequest).Methods("GET")
-	router.HandleFunc("/priceWait", asyncservice.WaitPriceRequest).Methods("POST")
+    priceRtr.HandleFunc("", asyncservice.AcceptPriceRequest).Methods("POST")
+	priceRtr.HandleFunc("/{id}", asyncservice.ReturnTaskRequest).Methods("GET")
+	priceRtr.HandleFunc("/synch/wait", asyncservice.WaitPriceRequest).Methods("POST")
     log.Fatal(http.ListenAndServe(":8080", router))
 }
