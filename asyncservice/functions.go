@@ -131,3 +131,11 @@ func ReturnTaskRequest(w http.ResponseWriter, r *http.Request) {
 	}
     json.NewEncoder(w).Encode(response);
 }
+
+func LogWrapper(h func(http.ResponseWriter, *http.Request)) http.Handler {
+  return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    log.Println("Before")
+    h(w, r) // call original
+    log.Println("After")
+  })
+}
