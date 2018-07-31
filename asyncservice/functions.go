@@ -4,12 +4,11 @@ import "net/http"
 import "encoding/json"
 import "strconv"
 import "time"
-import "fmt"
 import "math"
 import "github.com/gorilla/mux"
 import "../errhand"
 import "../config"
-import "log"
+import "../access"
 
 func initiateTaskMap() map[uint64]*TaskResponse {
 	tempRef := mapAccess.Load()
@@ -20,7 +19,6 @@ func initiateTaskMap() map[uint64]*TaskResponse {
 			defer mapLock.Unlock()
 			tempRef = mapAccess.Load()
 			if (tempRef != nil) {
-				log.Printf("Map is already initialized")
 				return *tempRef.(*map[uint64]*TaskResponse)
 			} else {
 				taskMap := make(map[uint64]*TaskResponse)
@@ -135,7 +133,7 @@ func LogWrapper(h func(http.ResponseWriter, *http.Request)) http.Handler {
 		http.Error(w, "Client cookie not found", 400)
 		return
 	} else {
-		fmt.Printf("ClientId is ",cookie)
+		_ = access.AccessRateControl(cookie.Value)
 	}
     h(w, r) // call original
   })
