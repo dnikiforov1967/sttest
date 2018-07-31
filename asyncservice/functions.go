@@ -134,8 +134,13 @@ func ReturnTaskRequest(w http.ResponseWriter, r *http.Request) {
 
 func LogWrapper(h func(http.ResponseWriter, *http.Request)) http.Handler {
   return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    log.Println("Before")
+    cookie, _ := r.Cookie("clientId")
+	if cookie == nil {
+		http.Error(w, "Client cookie not found", 400)
+		return
+	} else {
+		fmt.Printf("ClientId is ",cookie)
+	}
     h(w, r) // call original
-    log.Println("After")
   })
 }
