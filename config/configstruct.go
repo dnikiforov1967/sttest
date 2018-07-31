@@ -19,7 +19,10 @@ func (conf *ConfigStruct) ReadFromFile(fileName string) {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	json.Unmarshal(file, conf)
+	err = json.Unmarshal(file, conf)
+        if err != nil {
+            log.Fatal(err)
+        }
         for _, value := range conf.Limits {
             access.ClientLimits[value.ClientId] = value.Limit
         }
