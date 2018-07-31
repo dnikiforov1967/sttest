@@ -5,7 +5,6 @@ import (
 	"log"
 	"encoding/json"
         "../access"
-        "fmt"
 )
 
 type ConfigStruct struct {
@@ -23,6 +22,5 @@ func (conf *ConfigStruct) ReadFromFile(fileName string) {
 	json.Unmarshal(file, conf)
         for _, value := range conf.Limits {
             access.ClientLimits[value.ClientId] = value.Limit
-            fmt.Printf("Limit got %d", value.Limit)
         }
 }
