@@ -11,15 +11,18 @@ import "../errhand"
 import "../config"
 
 func initiateTaskMap() map[uint64]*TaskResponse {
-	if (taskMap != nil) {
-		return taskMap
+	tempRef := mapAccess.Load()
+	if tempRef!=nil {
+		return *tempRef.(*map[uint64]*TaskResponse)
 	} else {
 		    mapLock.Lock()
 			defer mapLock.Unlock()
-			if (taskMap != nil) {
-				return taskMap
+			tempRef = mapAccess.Load()
+			if (tempRef != nil) {
+				return *tempRef.(*map[uint64]*TaskResponse)
 			} else {
-				taskMap = make(map[uint64]*TaskResponse)
+				taskMap := make(map[uint64]*TaskResponse)
+				mapAccess.Store(&taskMap)
 				return taskMap
 			}
 	}
