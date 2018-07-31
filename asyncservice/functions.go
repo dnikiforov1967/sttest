@@ -133,7 +133,7 @@ func LogWrapper(h func(http.ResponseWriter, *http.Request)) http.Handler {
 		http.Error(w, "Client cookie not found", 400)
 		return
 	} else {
-		allowed := access.AccessRateControl(cookie.Value, 10)
+		allowed := access.AccessRateControl(cookie.Value)
 		if !allowed {
 			http.Error(w, "Too many requests", 400)
 			return
