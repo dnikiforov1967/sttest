@@ -8,7 +8,7 @@ import (
 )
 
 func ReadFromFile(fileName string) {
-	conf := &configStruct{}
+	conf := &ConfigStruct{}
 	file, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -17,8 +17,8 @@ func ReadFromFile(fileName string) {
         if err != nil {
             log.Fatal(err)
         }
-		TimeOut = conf.timeout
-        for _, value := range conf.limits {
+		TimeOut = conf.Timeout
+        for _, value := range conf.Limits {
             access.ClientLimits[value.ClientId] = value.Limit
         }
 }

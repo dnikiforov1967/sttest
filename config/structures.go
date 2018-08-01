@@ -2,7 +2,7 @@ package config
 
 import "../access"
 
-type configStruct struct {
-	timeout int64 `json:"timeout"`
-    limits []access.AccessLimitStruct `json:"limits"`
+type ConfigStruct struct {
+	Timeout int64 `json:"timeout"`
+    Limits []access.AccessLimitStruct `json:"limits"`
 }
