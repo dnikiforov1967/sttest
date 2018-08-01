@@ -1,3 +1,4 @@
 package config
 
-var GlobalConfig ConfigStruct = ConfigStruct{}
+var TimeOut int64
+

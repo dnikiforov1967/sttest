@@ -4,10 +4,11 @@ import (
 	"io/ioutil"
 	"log"
 	"encoding/json"
-        "../access"
+    "../access"
 )
 
-func (conf *ConfigStruct) ReadFromFile(fileName string) {
+func ReadFromFile(fileName string) {
+	conf := &configStruct{}
 	file, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -16,7 +17,8 @@ func (conf *ConfigStruct) ReadFromFile(fileName string) {
         if err != nil {
             log.Fatal(err)
         }
-        for _, value := range conf.Limits {
+		TimeOut = conf.timeout
+        for _, value := range conf.limits {
             access.ClientLimits[value.ClientId] = value.Limit
         }
 }

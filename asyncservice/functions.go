@@ -60,7 +60,7 @@ func proceed(id uint64, isin string, underlying float64, volatility float64, sig
 func checkTimeOut(initTime *time.Time) bool {
 	duration := time.Since(*initTime)
 	var millisec int64 = duration.Nanoseconds()/1000000
-	if millisec >= config.GlobalConfig.Timeout {
+	if millisec >= config.TimeOut {
 		return true
 	}
 	return false
