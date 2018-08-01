@@ -4,7 +4,7 @@ import "net/http"
 import "encoding/json"
 import "strconv"
 import "time"
-//import "math"
+import "math"
 import "github.com/gorilla/mux"
 import "github.com/dnikiforov1967/sttest/errhand"
 import "github.com/dnikiforov1967/sttest/config"
@@ -50,7 +50,7 @@ func proceed(id uint64, isin string, underlying float64, volatility float64, sig
 	}
 	//Normal commitment
 	response.Status = StatusCompleted
-	response.Price = underlying*volatility*1000 //math.Round(underlying*volatility*100000)/100
+	response.Price = math.Round(underlying*volatility*100000)/100
 	response.PriceDate = time.Now().Format(time.RFC3339)
 	if signalChan != nil {
 		signalChan <- 0
