@@ -18,6 +18,7 @@ func ReadFromFile(fileName string) {
             log.Fatal(err)
         }
 		TimeOut = conf.Timeout
+		Database = conf.Database
         for _, value := range conf.Limits {
             accesslib.ClientLimits[value.ClientId] = value.Limit
         }

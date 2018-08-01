@@ -1,4 +1,5 @@
 {
+	"database": "./../../sqlitedb/sttest.sqlt",
 	"timeout": 6000,
         "limits": [
             {

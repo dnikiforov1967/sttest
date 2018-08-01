@@ -1,1 +1,1 @@
-sqlite3 sttest.sqlt < drop_struct.sql
+sqlite3 $1 < drop_struct.sql

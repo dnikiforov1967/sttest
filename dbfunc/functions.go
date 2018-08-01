@@ -1,12 +1,13 @@
 package dbfunc
 
 import (
+	"../config"
     "database/sql"
     _ "github.com/mattn/go-sqlite3"
 )
 
 func openLocalDb() (*sql.DB, error) {
-    db, err := sql.Open("sqlite3", "sttest.sqlt")
+    db, err := sql.Open("sqlite3", config.Database)
     if err != nil {
         return nil, err
     }
