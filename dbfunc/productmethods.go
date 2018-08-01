@@ -1,6 +1,7 @@
 package dbfunc
 
 import (
+	"time"
     "../errhand"
     "database/sql"
     _ "github.com/mattn/go-sqlite3"
@@ -79,6 +80,9 @@ func (prod *Product) InsertProduct() error {
     if err != nil {
         return err
     }
+
+	//Creation date should be calculable
+	prod.CreationDate = time.Now().Format("2006-01-02")
 
     result, err := tx.Exec("insert into products (name, product_id, category, quanto, creationDate, expirationDate) values ($1, $2, $3, $4, $5, $6)", 
         prod.Name, prod.Product_id, prod.Category, prod.Quanto, prod.CreationDate, prod.ExpirationDate);
