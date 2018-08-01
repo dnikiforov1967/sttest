@@ -50,7 +50,7 @@ func proceed(id uint64, isin string, underlying float64, volatility float64, sig
 	}
 	//Normal commitment
 	response.Status = StatusCompleted
-	response.Price = math.Round(underlying*volatility*100000)/100
+	response.Price = math.Ceil(underlying*volatility*1000)/100
 	response.PriceDate = time.Now().Format(time.RFC3339)
 	if signalChan != nil {
 		signalChan <- 0
