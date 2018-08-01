@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 	"encoding/json"
-    "../access"
+    "github.com/dnikiforov1967/accesslib"
 )
 
 func ReadFromFile(fileName string) {
@@ -19,6 +19,6 @@ func ReadFromFile(fileName string) {
         }
 		TimeOut = conf.Timeout
         for _, value := range conf.Limits {
-            access.ClientLimits[value.ClientId] = value.Limit
+            accesslib.ClientLimits[value.ClientId] = value.Limit
         }
 }
