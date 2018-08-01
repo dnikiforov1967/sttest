@@ -1,8 +1,8 @@
 package rest
 
-import "../dbfunc"
+import "github.com/dnikiforov1967/sttest/dbfunc"
 import "net/http"
-import "../errhand"
+import "github.com/dnikiforov1967/sttest/errhand"
 import "encoding/json"
 import "github.com/gorilla/mux"
 

@@ -3,9 +3,9 @@ package main
 import "log"
 import "net/http"
 import "github.com/gorilla/mux"
-import "./rest"
-import "./asyncservice"
-import "./config"
+import "github.com/dnikiforov1967/sttest/rest"
+import "github.com/dnikiforov1967/sttest/asyncservice"
+import "github.com/dnikiforov1967/sttest/config"
 
 func main() {
 	

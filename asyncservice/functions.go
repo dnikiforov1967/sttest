@@ -6,8 +6,8 @@ import "strconv"
 import "time"
 import "math"
 import "github.com/gorilla/mux"
-import "../errhand"
-import "../config"
+import "github.com/dnikiforov1967/sttest/errhand"
+import "github.com/dnikiforov1967/sttest/config"
 import "github.com/dnikiforov1967/accesslib"
 
 func initiateTaskMap() map[uint64]*TaskResponse {
