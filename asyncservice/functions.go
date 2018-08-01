@@ -4,7 +4,7 @@ import "net/http"
 import "encoding/json"
 import "strconv"
 import "time"
-import "math"
+import "fmt"
 import "github.com/gorilla/mux"
 import "github.com/dnikiforov1967/sttest/errhand"
 import "github.com/dnikiforov1967/sttest/config"
@@ -29,7 +29,13 @@ func initiateTaskMap() map[uint64]*TaskResponse {
 }
 
 func Round(x, unit float64) float64 {
-    return math.Round(x/unit) * unit
+    var z float64 = 0.0
+    if x > 0 {
+        z = float64(int64(x/unit+0.5)) * unit
+    }
+    z = float64(int64(x/unit-0.5)) * unit
+    formatted, _ := strconv.ParseFloat(fmt.Sprintf("%.2f", z), 64)
+    return formatted
 }
 
 func proceed(id uint64, isin string, underlying float64, volatility float64, signalChan chan int) {
