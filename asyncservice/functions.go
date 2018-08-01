@@ -4,7 +4,7 @@ import "net/http"
 import "encoding/json"
 import "strconv"
 import "time"
-import "fmt"
+import "math"
 import "github.com/gorilla/mux"
 import "github.com/dnikiforov1967/sttest/errhand"
 import "github.com/dnikiforov1967/sttest/config"
@@ -28,14 +28,12 @@ func initiateTaskMap() map[uint64]*TaskResponse {
 	}
 }
 
-func Round(x, unit float64) float64 {
-    var z float64 = 0.0
-    if x > 0 {
-        z = float64(int64(x/unit+0.5)) * unit
+func Round(x float64) float64 {
+    t := math.Trunc(x)
+    if math.Abs(x-t) >= 0.5 {
+        return t + math.Copysign(1, x)
     }
-    z = float64(int64(x/unit-0.5)) * unit
-    formatted, _ := strconv.ParseFloat(fmt.Sprintf("%.2f", z), 64)
-    return formatted
+    return t
 }
 
 func proceed(id uint64, isin string, underlying float64, volatility float64, signalChan chan int) {
@@ -60,7 +58,7 @@ func proceed(id uint64, isin string, underlying float64, volatility float64, sig
 	}
 	//Normal commitment
 	response.Status = StatusCompleted
-	response.Price = Round(underlying*volatility*1000.00, 0.01)
+	response.Price = Round(underlying*volatility*100000)/100
 	response.PriceDate = time.Now().Format(time.RFC3339)
 	if signalChan != nil {
 		signalChan <- 0
