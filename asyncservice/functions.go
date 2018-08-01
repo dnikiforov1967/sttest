@@ -28,6 +28,10 @@ func initiateTaskMap() map[uint64]*TaskResponse {
 	}
 }
 
+func Round(x, unit float64) float64 {
+    return math.Round(x/unit) * unit
+}
+
 func proceed(id uint64, isin string, underlying float64, volatility float64, signalChan chan int) {
 	respMap := initiateTaskMap();
 	response := TaskResponse{id, isin, StatusInProgress, 0, ""}
@@ -50,7 +54,7 @@ func proceed(id uint64, isin string, underlying float64, volatility float64, sig
 	}
 	//Normal commitment
 	response.Status = StatusCompleted
-	response.Price = math.Round(underlying*volatility*100000)*1.0/100
+	response.Price = Round(underlying*volatility*1000.00, 0.01)
 	response.PriceDate = time.Now().Format(time.RFC3339)
 	if signalChan != nil {
 		signalChan <- 0
