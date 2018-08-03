@@ -5,6 +5,7 @@ import (
 	"log"
 	"encoding/json"
     "github.com/dnikiforov1967/accesslib"
+	"sync/atomic"
 )
 
 func ReadFromFile(fileName string) {
@@ -17,7 +18,7 @@ func ReadFromFile(fileName string) {
         if err != nil {
             log.Fatal(err)
         }
-		TimeOut = conf.Timeout
+		atomic.StoreInt64(&TimeOut, conf.Timeout)
 		Database = conf.Database
         for _, value := range conf.Limits {
             accesslib.ClientLimits[value.ClientId] = value.Limit
