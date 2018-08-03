@@ -62,4 +62,10 @@ Now you can start application using command:
 
 ### Go unit tests
 
+To execute application unit tests you should call:
+
+```
+./goTest.sh
+```
+
 ### Web service tests using CURL
