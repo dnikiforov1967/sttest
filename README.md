@@ -2,9 +2,6 @@
 
 ---
 
-* [Prerequisites](# Prerequisites)
----
-
 ## Prerequisites
 
 1. Database - SQLite 3.X
@@ -15,7 +12,7 @@
 
 Download the project using git or go get tools:
 
-```
+```sh
 git clone https://github.com/dnikiforov1967/sttest.git
 ```
 
