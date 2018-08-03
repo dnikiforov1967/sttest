@@ -26,9 +26,9 @@ Go to project root folder sttest and download the required go packages starting 
 
 You should download three Go packages:
 
-github.com/mattn/go-sqlite3
-github.com/gorilla/mux
-github.com/dnikiforov1967/accesslib
+* github.com/mattn/go-sqlite3
+* github.com/gorilla/mux
+* github.com/dnikiforov1967/accesslib
 
 Package github.com/dnikiforov1967/accesslib implements rate limit functionality in the separate module
 
