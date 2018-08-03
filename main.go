@@ -26,6 +26,7 @@ func main() {
 	configRtr := router.PathPrefix("/config").Subrouter().StrictSlash(true)
 	configRtr.HandleFunc("/timeout/{timeout}", config.SetTimeout).Methods("PATCH")
 	configRtr.HandleFunc("/rate/{clientId}/{rateLimit}", config.SetRateLimit).Methods("PATCH")
+	configRtr.HandleFunc("", config.GetConfiguration).Methods("GET")
 
     log.Fatal(http.ListenAndServe(":8080", router))
 }
