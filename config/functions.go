@@ -24,7 +24,7 @@ func ReadFromFile(fileName string) {
 		atomic.StoreInt64(&TimeOut, conf.Timeout)
 		Database = conf.Database
         for _, value := range conf.Limits {
-            accesslib.ClientLimits[value.ClientId] = value.Limit
+            accesslib.WriteLimit(value.ClientId,value.Limit)
         }
 }
 
@@ -37,5 +37,18 @@ func SetTimeout(w http.ResponseWriter, r *http.Request) {
         return
     }
 	atomic.StoreInt64(&TimeOut, timeout)
+	w.WriteHeader(http.StatusAccepted)
+}
+
+func SetRateLimit(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r);
+	clientId := params["clientId"]
+	var param string = params["rateLimit"]
+	rateLimit, err := strconv.ParseInt(param, 10, 64)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+	accesslib.WriteLimit(clientId, rateLimit)
 	w.WriteHeader(http.StatusAccepted)
 }
