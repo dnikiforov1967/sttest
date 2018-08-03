@@ -3,9 +3,12 @@ package config
 import (
 	"io/ioutil"
 	"log"
+	"strconv"
 	"encoding/json"
     "github.com/dnikiforov1967/accesslib"
 	"sync/atomic"
+	"net/http"
+	"github.com/gorilla/mux"
 )
 
 func ReadFromFile(fileName string) {
@@ -23,4 +26,16 @@ func ReadFromFile(fileName string) {
         for _, value := range conf.Limits {
             accesslib.ClientLimits[value.ClientId] = value.Limit
         }
+}
+
+func SetTimeout(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r);
+	var param string = params["timeout"]
+	timeout, err := strconv.ParseInt(param, 10, 64)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+	atomic.StoreInt64(&TimeOut, timeout)
+	w.WriteHeader(http.StatusAccepted)
 }

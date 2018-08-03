@@ -23,5 +23,8 @@ func main() {
 	priceRtr.Handle("/{id}", asyncservice.LogWrapper(asyncservice.ReturnTaskRequest)).Methods("GET")
 	priceRtr.Handle("/synch/wait", asyncservice.LogWrapper(asyncservice.WaitPriceRequest)).Methods("POST")
 
+	configRtr := router.PathPrefix("/config").Subrouter().StrictSlash(true)
+	configRtr.HandleFunc("/timeout/{timeout}", config.SetTimeout).Methods("PATCH")
+
     log.Fatal(http.ListenAndServe(":8080", router))
 }
