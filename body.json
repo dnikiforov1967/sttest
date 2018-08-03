@@ -1,6 +1,6 @@
 {
 	"name": "A",
-	"product_id": "3",
+	"product_id": "ProductId1",
 	"category": "C1",
 	"quanto": true, 
 	"creationDate": "2017-01-02",

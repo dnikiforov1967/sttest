@@ -1,1 +1,1 @@
-sqlite3 $1 < create_struct.sql
+sqlite3 sttest.sqlt < create_struct.sql
