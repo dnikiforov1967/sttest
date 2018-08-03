@@ -1,1 +1,1 @@
-{"database":"sttest.sqlt","timeout":6000,"limits":[{"clientId":"clientA","limit":10}]}
+{"database":"sttest.sqlt","timeout":6000,"limits":[{"clientId":"clientA","limit":7},{"clientId":"clientC","limit":0}]}
