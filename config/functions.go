@@ -40,6 +40,8 @@ func WriteToFile(fileName string, conf *ConfigStruct) {
 }
 
 func updateConfig() {
+	configMutex.Lock()
+	defer configMutex.Unlock()
 	conf := makeJsonConfig()
 	WriteToFile(ConfigFileName, &conf)
 }
