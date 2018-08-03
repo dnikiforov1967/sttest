@@ -1,8 +1,11 @@
 package asyncservice
 
-import "sync"
-import "sync/atomic"
+import (
+	"sync"
+	"sync/atomic"
+)
 
+//This variable is responsible to keep information about price calculation tasks
 var TaskCounter taskCounter = taskCounter{0}
 
 var (

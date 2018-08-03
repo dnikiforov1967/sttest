@@ -5,12 +5,14 @@ import "encoding/json"
 import "strconv"
 import "time"
 import "math"
+import "sync"
 import "sync/atomic"
 import "github.com/gorilla/mux"
 import "github.com/dnikiforov1967/sttest/errhand"
 import "github.com/dnikiforov1967/sttest/config"
 import "github.com/dnikiforov1967/accesslib"
 
+//function safely instantiate new task map structure
 func initiateTaskMap() map[uint64]*TaskResponse {
 	tempRef := mapAccess.Load()
 	if tempRef!=nil {
@@ -29,6 +31,7 @@ func initiateTaskMap() map[uint64]*TaskResponse {
 	}
 }
 
+//function rounds float64 to 2 dec. points (bug in go_wrapper does not allow math.Round() to use)
 func Round2(x float64) float64 {
 	x = x *100
     t := math.Trunc(x)
@@ -38,9 +41,10 @@ func Round2(x float64) float64 {
     return t/100
 }
 
+//Function executes task. Taks execution takes about 5 sec
 func proceed(id uint64, isin string, underlying float64, volatility float64, signalChan chan int) {
 	respMap := initiateTaskMap();
-	response := TaskResponse{id, isin, StatusInProgress, 0, ""}
+	response := TaskResponse{id, isin, StatusInProgress, 0, "", sync.RWMutex{}}
 	respMap[id] = &response;
 
 	initTime := time.Now()
@@ -59,14 +63,13 @@ func proceed(id uint64, isin string, underlying float64, volatility float64, sig
 		}
 	}
 	//Normal commitment
-	response.Status = StatusCompleted
-	response.Price = Round2(underlying*volatility*1000)
-	response.PriceDate = time.Now().Format(time.RFC3339)
+	response.writeData(underlying*volatility*1000)
 	if signalChan != nil {
 		signalChan <- 0
 	}
 }
 
+//Function checks if timeout expired
 func checkTimeOut(initTime *time.Time) bool {
 	duration := time.Since(*initTime)
 	var millisec int64 = duration.Nanoseconds()/1000000
@@ -77,9 +80,12 @@ func checkTimeOut(initTime *time.Time) bool {
 	return false
 }
 
+//Function returns task state
 func getTaskState(id uint64) (TaskResponse, error) {
 	respMap := initiateTaskMap();
 	val, ok := respMap[id];
+	val.readLock()
+	defer val.readUnlock()
 	if ok {
 		return *val, nil
 	} else {
@@ -87,6 +93,7 @@ func getTaskState(id uint64) (TaskResponse, error) {
 	}
 }
 
+//Function proceeds price request. It returns path to task resource for later check
 func AcceptPriceRequest(w http.ResponseWriter, r *http.Request) {
 	priceRequest := PriceRequest{}
 	_ = json.NewDecoder(r.Body).Decode(&priceRequest)
@@ -97,6 +104,7 @@ func AcceptPriceRequest(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(response);
 }
 
+//Function proceeds price request in sync.  
 func WaitPriceRequest(w http.ResponseWriter, r *http.Request) {
 	priceRequest := PriceRequest{}
 	_ = json.NewDecoder(r.Body).Decode(&priceRequest)
@@ -104,7 +112,7 @@ func WaitPriceRequest(w http.ResponseWriter, r *http.Request) {
 	signalChan := make(chan int)
 	go proceed(taskId, priceRequest.Isin, priceRequest.Underlying, priceRequest.Volatility, signalChan)
 	if signal := <- signalChan; signal == -1 {
-		http.Error(w, errhand.TaskCanselledByTimeOut.Error(), http.StatusServiceUnavailable)
+		http.Error(w, errhand.TaskCancelledByTimeOut.Error(), http.StatusServiceUnavailable)
         return
 	}
     response, err := getTaskState(taskId)
@@ -118,6 +126,7 @@ func WaitPriceRequest(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(response);
 }
 
+//Function returns the state of task
 func ReturnTaskRequest(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r);
 	var param string = params["id"]
@@ -137,6 +146,7 @@ func ReturnTaskRequest(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(response);
 }
 
+//Function checks the rate limit before call of requests
 func LogWrapper(h func(http.ResponseWriter, *http.Request)) http.Handler {
   return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
     cookie, _ := r.Cookie("clientId")

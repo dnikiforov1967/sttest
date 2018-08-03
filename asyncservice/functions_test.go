@@ -1,8 +1,11 @@
 package asyncservice
 
-import "testing"
-import "math"
+import (
+	"testing"
+	"math"
+)
 
+//Test round() implementation
 func TestRound(t * testing.T) {
 	array := []float64{1.005, 1.005001, 1.0049999}
 

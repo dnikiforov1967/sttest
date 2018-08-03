@@ -7,6 +7,8 @@ import "github.com/dnikiforov1967/sttest/rest"
 import "github.com/dnikiforov1967/sttest/asyncservice"
 import "github.com/dnikiforov1967/sttest/config"
 
+//Standard Golang entry point
+//Application is designed to proceed web requests from outer clients
 func main() {
 	
 	//Read standard configuration
