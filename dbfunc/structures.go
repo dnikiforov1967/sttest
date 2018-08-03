@@ -1,5 +1,6 @@
 package dbfunc
 
+//Product top representation
 type Product struct {
     id int64
     Name string `json:"name"`
@@ -11,35 +12,41 @@ type Product struct {
     Terms TermsStruct `json:"terms"`
 }
 
+//Terms representation
 type TermsStruct struct {
     Events []Event `json:"events"`
 }
 
+//Event representation
 type Event struct {
     id int64
     parent_id int64
     EventType string `json:"type"`
 	Terminal bool `json:"terminal"`
-	ExecutionStruct `json:"execution"`
+	Execution `json:"execution"`
 	CashDirection `json:"cashDirection"`
 }
 
-type ExecutionStruct struct {
-	OnStruct `json:"on"`
+//Execution representation
+type Execution struct {
+	On `json:"on"`
 	Origin string `json:"origin"`
 	ExecType string `json:"type"`
 }
 
-type OnStruct struct {
+//On representation
+type On struct {
 	Kind string `json:"kind"`
 }
 
+//CacheDirection representation
 type CashDirection struct {
 	Path string `json:"path"`
 	CashType string `json:"type"`
 	Payment `json:"payment"`
 }
 
+//Payment representation
 type Payment struct {
 	PaymentType string `json:"type"`
 	Method string `json:"method"`

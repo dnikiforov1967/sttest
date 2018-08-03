@@ -7,6 +7,8 @@ import (
     _ "github.com/mattn/go-sqlite3"
 )
 
+//Method searches Product record in database which has specified product_id value
+//and returns its database-specific primary key value
 func (prod *Product) findIdByProductId(tx *sql.Tx) error {
     row := tx.QueryRow("select id from products where product_id = $1",
     prod.Product_id);
@@ -21,6 +23,7 @@ func (prod *Product) findIdByProductId(tx *sql.Tx) error {
     return nil
 }
 
+//Method searches Product record in database which has specified product_id value
 func (prod *Product) FetchProductByProductId() (error) {
     db, err := openLocalDb();
     if err != nil {
@@ -55,6 +58,7 @@ func (prod *Product) FetchProductByProductId() (error) {
     return nil
 }
 
+//Method saves in the database all Event objects what pertain to this Product object
 func (prod *Product) InsertEvents(tx *sql.Tx) error {
     //Cycle to insert referenced data
     for _, event := range prod.Terms.Events {
@@ -68,6 +72,7 @@ func (prod *Product) InsertEvents(tx *sql.Tx) error {
     return nil
 }
 
+//Method saves Product object in the database
 func (prod *Product) InsertProduct() error {
     
     db, err := openLocalDb();
@@ -105,6 +110,9 @@ func (prod *Product) InsertProduct() error {
     return nil
 }
 
+//Method updates Product object in the database
+//Method accepts product_id value of Product to be updated as the parameter
+//This is because product_id can be modified
 func (prod *Product) UpdateProduct(origId string) error {
     
     db, err := openLocalDb();
@@ -161,6 +169,7 @@ func (prod *Product) UpdateProduct(origId string) error {
     return nil
 }
 
+//Method deleted Product from database by product_id value
 func (prod *Product) DeleteProductByProductId() error {
     
     db, err := openLocalDb()
