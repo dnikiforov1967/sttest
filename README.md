@@ -58,7 +58,7 @@ Now you can start application using command:
 ```sh
 ./main
 ```
-
+---
 
 ## How to test application
 
@@ -184,3 +184,4 @@ You should see the response like this
 HTTP/1.1 204 No Content
 Date: Fri, 03 Aug 2018 16:20:06 GMT
 ```
+---
