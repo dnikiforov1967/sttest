@@ -10,7 +10,7 @@ import "github.com/dnikiforov1967/sttest/config"
 func main() {
 	
 	//Read standard configuration
-	config.ReadFromFile("./config.json")
+	config.ReadFromFile(config.ConfigFileName)
 
     router := mux.NewRouter().StrictSlash(true)
     router.HandleFunc("/product", rest.CreateProduct).Methods("POST")

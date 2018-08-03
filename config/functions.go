@@ -28,7 +28,24 @@ func ReadFromFile(fileName string) {
         }
 }
 
+func WriteToFile(fileName string, conf *ConfigStruct) {
+	bytes, err := json.Marshal(conf);
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	err = ioutil.WriteFile(fileName, bytes, 0644)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+}
+
+func updateConfig() {
+	conf := makeJsonConfig()
+	WriteToFile(ConfigFileName, &conf)
+}
+
 func SetTimeout(w http.ResponseWriter, r *http.Request) {
+	defer updateConfig()
 	params := mux.Vars(r);
 	var param string = params["timeout"]
 	timeout, err := strconv.ParseInt(param, 10, 64)
@@ -41,6 +58,7 @@ func SetTimeout(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetRateLimit(w http.ResponseWriter, r *http.Request) {
+	defer updateConfig()
 	params := mux.Vars(r);
 	clientId := params["clientId"]
 	var param string = params["rateLimit"]
