@@ -1,11 +1,14 @@
 # Test project
 
-* [Prerequisites](## Prerequisites)
+---
+
+* [Prerequisites](# Prerequisites)
+---
 
 ## Prerequisites
 
 1. Database - SQLite 3.X
-
+---
 ## How to build project
 
 1. 
