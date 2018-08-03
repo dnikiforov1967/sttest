@@ -10,17 +10,17 @@
 
 1. 
 
-Download the project using git or go get tools:
+Download the project using go get tools:
 
 ```sh
-git clone https://github.com/dnikiforov1967/sttest.git
+go get github.com/dnikiforov1967/sttest
 ```
 
 2.
 
 Go to project root folder sttest and download the required go packages starting the following command:
 
-```
+```sh
 ./download-pkg.sh
 ```
 
@@ -36,7 +36,7 @@ Package github.com/dnikiforov1967/accesslib implements rate limit functionality 
 
 Compile the code:
 
-```
+```sh
 ./build.sh
 ``` 
 
@@ -47,7 +47,7 @@ You can find structure descriptions in file create_struct.sql
 
 If you want to re-create database structures, execute the script:
 
-```
+```sh
 ./createDb.sh
 ```
 
@@ -55,7 +55,7 @@ If you want to re-create database structures, execute the script:
 
 Now you can start application using command:
 
-```
+```sh
 ./main
 ```
 
@@ -66,7 +66,7 @@ Now you can start application using command:
 
 To execute application unit tests you should call:
 
-```
+```sh
 ./goTest.sh
 ```
 
@@ -81,19 +81,19 @@ against /product URL. Please see insertData.sh script code for details.
 
 You can modify the content of file 
 
-```
+```sh
 body.json 
 ```
 
 allocated in project folder in accordance to your wish and execute the command:
 
-```
+```sh
 ./insertData.sh
 ```
 
 You should see the response similar to:
 
-```
+```json
 {"name":"A","product_id":"ProductId1","category":"C1","quanto":true,"creationDate":"2018-08-03",
 "expirationDate":"2018-01-02",
 "terms":{"events":[
@@ -118,19 +118,19 @@ Please see updateData.sh script code for details.
 
 You can modify the content of file 
 
-```
+```sh
 update.json 
 ```
 
 allocated in project folder in accordance to your wish and execute the command:
 
-```
+```sh
 ./updateData.sh <original product id>
 ```
 
 You should see the response like this
 
-```
+```sh
 HTTP/1.1 200 OK
 Date: Fri, 03 Aug 2018 15:46:50 GMT
 Content-Length: 469
@@ -149,13 +149,13 @@ Content-Type: text/plain; charset=utf-8
 
 To select product execute the following script:
 
-```
+```sh
 ./selectData.sh <product id>
 ``` 
 
 You should see the response like this
 
-```
+```sh
 HTTP/1.1 200 OK
 Date: Fri, 03 Aug 2018 15:46:50 GMT
 Content-Length: 469
@@ -174,13 +174,13 @@ Content-Type: text/plain; charset=utf-8
 
 To delete product execute the following script:
 
-```
+```sh
 ./deleteData.sh <product id>
 ``` 
 
 You should see the response like this
 
-```
+```sh
 HTTP/1.1 204 No Content
 Date: Fri, 03 Aug 2018 16:20:06 GMT
 ```
