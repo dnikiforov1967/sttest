@@ -53,7 +53,7 @@ func SetRateLimit(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusAccepted)
 }
 
-func GetConfiguration(w http.ResponseWriter, r *http.Request) {
+func makeJsonConfig() ConfigStruct {
 	conf := ConfigStruct{}
 	conf.Database = Database
 	conf.Timeout = TimeOut
@@ -61,5 +61,10 @@ func GetConfiguration(w http.ResponseWriter, r *http.Request) {
 	for key, value := range accesslib.ReadLimits() {
 		conf.Limits = append(conf.Limits, accesslib.AccessLimitStruct{key, value})
 	}
+	return conf
+}
+
+func GetConfiguration(w http.ResponseWriter, r *http.Request) {
+	conf := makeJsonConfig()
 	json.NewEncoder(w).Encode(&conf);
 }
