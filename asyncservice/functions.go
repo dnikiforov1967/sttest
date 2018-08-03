@@ -5,6 +5,7 @@ import "encoding/json"
 import "strconv"
 import "time"
 import "math"
+import "sync/atomic"
 import "github.com/gorilla/mux"
 import "github.com/dnikiforov1967/sttest/errhand"
 import "github.com/dnikiforov1967/sttest/config"
@@ -69,7 +70,8 @@ func proceed(id uint64, isin string, underlying float64, volatility float64, sig
 func checkTimeOut(initTime *time.Time) bool {
 	duration := time.Since(*initTime)
 	var millisec int64 = duration.Nanoseconds()/1000000
-	if millisec >= config.TimeOut {
+	timeOut := atomic.LoadInt64(&config.TimeOut)
+	if millisec >= timeOut {
 		return true
 	}
 	return false
