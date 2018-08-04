@@ -1,16 +1,18 @@
 package asyncservice
 
-import "net/http"
-import "encoding/json"
-import "strconv"
-import "time"
-import "math"
-import "sync"
-import "sync/atomic"
-import "github.com/gorilla/mux"
-import "github.com/dnikiforov1967/sttest/errhand"
-import "github.com/dnikiforov1967/sttest/config"
-import "github.com/dnikiforov1967/accesslib"
+import (
+    "net/http"
+    "encoding/json"
+    "strconv"
+    "time"
+    "math"
+    "sync"
+    "sync/atomic"
+    "github.com/gorilla/mux"
+    "github.com/dnikiforov1967/sttest/errhand"
+    "github.com/dnikiforov1967/sttest/config"
+    "github.com/dnikiforov1967/accesslib"
+)
 
 //function safely instantiate new task map structure
 func initiateTaskMap() map[uint64]*TaskResponse {
@@ -149,17 +151,17 @@ func ReturnTaskRequest(w http.ResponseWriter, r *http.Request) {
 //Function checks the rate limit before call of requests
 func LogWrapper(h func(http.ResponseWriter, *http.Request)) http.Handler {
   return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    cookie, _ := r.Cookie("clientId")
-	if cookie == nil {
-		http.Error(w, "Client cookie not found", 400)
-		return
-	} else {
-		allowed := accesslib.AccessRateControl(cookie.Value)
-		if !allowed {
-			http.Error(w, "Too many requests", 400)
-			return
-		}
+    cookie, err := r.Cookie("clientId")
+    if err != nil {
+	http.Error(w, err.Error(), 400)
+	return
+    } else {
+	allowed := accesslib.AccessRateControl(cookie.Value)
+	if !allowed {
+            http.Error(w, "Too many requests", 400)
+            return
 	}
+    }
     h(w, r) // call original
   })
 }

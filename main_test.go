@@ -7,12 +7,14 @@ import (
     "encoding/json"
     "bytes"
     "reflect"
+    "time"
 
     "github.com/gorilla/mux"
     "github.com/stretchr/testify/assert"
     "github.com/dnikiforov1967/sttest/dbfunc"
     "github.com/dnikiforov1967/sttest/rest"
     "github.com/dnikiforov1967/sttest/config"
+    "github.com/dnikiforov1967/sttest/asyncservice"
 )
 
 func Router() *mux.Router {
@@ -21,7 +23,13 @@ func Router() *mux.Router {
     router.HandleFunc("/product/{id}", rest.GetProduct).Methods("GET")
     router.HandleFunc("/product/{id}", rest.UpdateProduct).Methods("PUT")
     router.HandleFunc("/product/{id}", rest.DeleteProduct).Methods("DELETE")
+    router.Handle("/price", asyncservice.LogWrapper(asyncservice.AcceptPriceRequest)).Methods("POST")
     return router
+}
+
+func PriceRouter(router *mux.Router) *mux.Router {
+    priceRtr := router.PathPrefix("/price").Subrouter().StrictSlash(true)
+    return priceRtr
 }
 
 func TestCreateEndpoint(t *testing.T) {
@@ -32,16 +40,18 @@ func TestCreateEndpoint(t *testing.T) {
     product := dbfunc.GetTestProduct("ID0")
     jsonProduct, _ := json.Marshal(&product)
 
+    router := Router()
+
     requestPost, _ := http.NewRequest("POST", "/product", bytes.NewBuffer(jsonProduct))
     responsePost := httptest.NewRecorder()
-    Router().ServeHTTP(responsePost, requestPost)
+    router.ServeHTTP(responsePost, requestPost)
     assert.Equal(t, 201, responsePost.Code, "OK response is expected")
     insertedProduct := dbfunc.Product{}
     json.Unmarshal(responsePost.Body.Bytes(), &insertedProduct)
 
     requestGet, _ := http.NewRequest("GET", "/product/"+product.Product_id, nil)
     responseGet := httptest.NewRecorder()
-    Router().ServeHTTP(responseGet, requestGet)
+    router.ServeHTTP(responseGet, requestGet)
     assert.Equal(t, 200, responseGet.Code, "OK response is expected")
     fetchedProduct := dbfunc.Product{}
     json.Unmarshal(responseGet.Body.Bytes(), &fetchedProduct)
@@ -53,14 +63,14 @@ func TestCreateEndpoint(t *testing.T) {
     jsonProduct, _ = json.Marshal(&insertedProduct)
     requestPut, _ := http.NewRequest("PUT", "/product/"+product.Product_id, bytes.NewBuffer(jsonProduct))
     responsePut := httptest.NewRecorder()
-    Router().ServeHTTP(responsePut, requestPut)
+    router.ServeHTTP(responsePut, requestPut)
     assert.Equal(t, 200, responsePut.Code, "OK response is expected")
     updatedProduct := dbfunc.Product{}
     json.Unmarshal(responsePut.Body.Bytes(), &updatedProduct)
 
     requestGet, _ = http.NewRequest("GET", "/product/"+product.Product_id, nil)
     responseGet = httptest.NewRecorder()
-    Router().ServeHTTP(responseGet, requestGet)
+    router.ServeHTTP(responseGet, requestGet)
     assert.Equal(t, 200, responseGet.Code, "OK response is expected")
     fetchedProduct = dbfunc.Product{}
     json.Unmarshal(responseGet.Body.Bytes(), &fetchedProduct)
@@ -75,7 +85,14 @@ func TestCreateEndpoint(t *testing.T) {
 
     requestGet, _ = http.NewRequest("GET", "/product/"+product.Product_id, nil)
     responseGet = httptest.NewRecorder()
-    Router().ServeHTTP(responseGet, requestGet)
+    router.ServeHTTP(responseGet, requestGet)
     assert.Equal(t, 404, responseGet.Code, "OK response is expected")
+
+    priceRequest := asyncservice.PriceRequest{"ISIN0",0.4, 0.007}
+    jsonPriceRequest, _ := json.Marshal(&priceRequest)
+    request, _ := http.NewRequest("POST", "/price", bytes.NewBuffer(jsonPriceRequest))
+    response := httptest.NewRecorder()
+    router.ServeHTTP(response, request)
+    assert.Equal(t, 400, response.Code, "OK response is expected")
 
 }
