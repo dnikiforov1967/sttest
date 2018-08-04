@@ -225,12 +225,28 @@ Date: Fri, 03 Aug 2018 16:20:06 GMT
 
 ##### Asynchronious requests
 
+###### * All requests to price API in scripts below executed under account clientA (using cookies).
+
 To perform price calculation request you can use the floowing script:
 
 ```sh
 ./priceRequest.sh
 ```
+This script posts to server the data from file price.json, allocated in root project directory.
+Its content:
 
+```sh
+{
+    "isin": "67462",
+	"underlying": 177.82,
+	"volatility": 0.818
+}
+```
+You should immediately get the response like this
+
+```sh
+{"resource":"price/1"}
+```
 
 ---
 
