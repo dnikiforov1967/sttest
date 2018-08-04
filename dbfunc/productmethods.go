@@ -30,7 +30,7 @@ func (prod *Product) FetchProductByProductId() (error) {
         return err
     }
     defer db.Close()
-    row := db.QueryRow("select id, name, product_id, category, quanto, creationDate, expirationDate from products where product_id = $1",
+    row := db.QueryRow("select id, name, product_id, category, quanto, creationDate, expirationDate from products where product_id = $1 order by id",
     prod.Product_id);
     err = row.Scan(&prod.id, &prod.Name, &prod.Product_id, &prod.Category, &prod.Quanto, &prod.CreationDate, &prod.ExpirationDate)
     if err != nil {
