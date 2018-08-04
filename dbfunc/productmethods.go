@@ -1,7 +1,7 @@
 package dbfunc
 
 import (
-	"time"
+    "time"
     "github.com/dnikiforov1967/sttest/errhand"
     "database/sql"
     _ "github.com/mattn/go-sqlite3"
