@@ -2,8 +2,8 @@ package dbfunc
 
 import (
 	"github.com/dnikiforov1967/sttest/config"
-    "database/sql"
-    _ "github.com/mattn/go-sqlite3"
+        "database/sql"
+        _ "github.com/mattn/go-sqlite3"
 )
 
 //Function opens db connection
