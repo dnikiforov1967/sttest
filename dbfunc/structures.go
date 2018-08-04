@@ -22,9 +22,9 @@ type Event struct {
     id int64
     parent_id int64
     EventType string `json:"type"`
-	Terminal bool `json:"terminal"`
-	Execution `json:"execution"`
-	CashDirection `json:"cashDirection"`
+    Terminal bool `json:"terminal"`
+    Execution `json:"execution"`
+    CashDirection `json:"cashDirection"`
 }
 
 //Execution representation
