@@ -75,9 +75,9 @@ structure
     ]
 }
 ```
-"database" value should NOT be changed
-"timeout" is the timeout of price calculation
-"limits" values show maximum number of requests to price API can issue each client per second
+* "database" value should NOT be changed
+* "timeout" is the timeout of price calculation
+* "limits" values show maximum number of requests to price API can issue each client per second
 
 ---
 
