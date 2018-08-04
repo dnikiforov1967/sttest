@@ -29,6 +29,7 @@ You should download three Go packages:
 * github.com/mattn/go-sqlite3
 * github.com/gorilla/mux
 * github.com/dnikiforov1967/accesslib
+* github.com/stretchr/testify/assert
 
 Package github.com/dnikiforov1967/accesslib implements rate limit functionality in the separate module
 

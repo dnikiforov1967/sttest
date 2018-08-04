@@ -10,14 +10,7 @@ import (
 func TestDb(t *testing.T) {
     config.Database = "../sttest.sqlt"
 
-    payment := Payment{"a","b","c"}
-    on := On{"X"}
-    execution := Execution{on,"Y","Type"}
-    cashDirection := CashDirection{"Pay","Cash",payment}
-    event := Event{0,0,"EXECUTION",true,execution,cashDirection}
-    termsStruct := TermsStruct{}
-    termsStruct.Events = append(termsStruct.Events, event)
-    product := Product{0,"Name","ID1","Cat",true,"","2018-01-01",termsStruct}
+    product := GetTestProduct("ID1")
 
     err := product.InsertProduct()
     if err != nil {
