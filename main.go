@@ -11,8 +11,8 @@ import "github.com/dnikiforov1967/sttest/config"
 //Application is designed to proceed web requests from outer clients
 func main() {
 	
-	//Read standard configuration
-	config.ReadFromFile(config.ConfigFileName)
+    //Read standard configuration
+    config.ReadFromFile(config.ConfigFileName)
 
     router := mux.NewRouter().StrictSlash(true)
     router.HandleFunc("/product", rest.CreateProduct).Methods("POST")
