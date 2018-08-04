@@ -265,6 +265,8 @@ After 5 seconds you should get another response on the same request:
 ```sh
 {"id":2,"isin":"67462","status":"COMPLETED","price":145456.76,"date":"2018-08-04T21:10:31+02:00"}
 ```
+##### Waiting request
+
 Alternatively you can use waiting API to get price. API shall wait for the completion of price calculation (
 wait for the async procedure execution completion):
 
@@ -274,11 +276,47 @@ wait for the async procedure execution completion):
 {"id":3,"isin":"67462","status":"COMPLETED","price":145456.76,"date":"2018-08-04T21:17:35+02:00"}
 ```
 
+##### Rate limit in action
 
-	
+To see the effect of the rate limit please use the following script
+
+```sh
+./priceRequestWait.sh 1000
+```
+You should see the result like this:
 
 
+```sh
+{"resource":"price/4"}
+{"resource":"price/5"}
+{"resource":"price/6"}
+{"resource":"price/7"}
+{"resource":"price/8"}
+{"resource":"price/9"}
+{"resource":"price/10"}
+Too many requests
+Too many requests
+Too many requests
+Too many requests
+Too many requests
+Too many requests
+...
+Too many requests
+Too many requests
+{"resource":"price/11"}
+{"resource":"price/12"}
+{"resource":"price/13"}
+{"resource":"price/14"}
+{"resource":"price/15"}
+{"resource":"price/16"}
+{"resource":"price/17"}
+Too many requests
+Too many requests
+Too many requests
+...
+```
 
+Using config API you can manipulate rate limit value for clientA and see different results
 
 ---
 
