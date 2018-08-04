@@ -73,4 +73,9 @@ func TestCreateEndpoint(t *testing.T) {
     Router().ServeHTTP(responseDelete, requestDelete)
     assert.Equal(t, 204, responseDelete.Code, "OK response is expected")
 
+    requestGet, _ = http.NewRequest("GET", "/product/"+product.Product_id, nil)
+    responseGet = httptest.NewRecorder()
+    Router().ServeHTTP(responseGet, requestGet)
+    assert.Equal(t, 404, responseGet.Code, "OK response is expected")
+
 }
