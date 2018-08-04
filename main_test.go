@@ -7,7 +7,6 @@ import (
     "encoding/json"
     "bytes"
     "reflect"
-    "time"
 
     "github.com/gorilla/mux"
     "github.com/stretchr/testify/assert"
@@ -80,7 +79,7 @@ func TestCreateEndpoint(t *testing.T) {
  
     requestDelete, _ := http.NewRequest("DELETE", "/product/"+product.Product_id, nil)
     responseDelete := httptest.NewRecorder()
-    Router().ServeHTTP(responseDelete, requestDelete)
+    router.ServeHTTP(responseDelete, requestDelete)
     assert.Equal(t, 204, responseDelete.Code, "OK response is expected")
 
     requestGet, _ = http.NewRequest("GET", "/product/"+product.Product_id, nil)
