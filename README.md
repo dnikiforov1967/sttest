@@ -75,7 +75,7 @@ To execute application unit tests you should call:
 
 #### Product service
 
-#### 1. Create product
+##### 1. Create product
 
 To create product you should execute POST request with JSON body containing product description
 against /product URL. Please see insertData.sh script code for details.
@@ -111,7 +111,7 @@ You should see the response similar to:
 Take into account what product_id value uniquely identifies the product. You should use it 
 in all other manipulations with data.
 
-#### 2. Update product
+##### 2. Update product
 
 To create product you should execute PUT request with JSON body containing product description
 against /product/{id} URL where id is product_id of the product you want to change. 
@@ -146,7 +146,7 @@ Content-Type: text/plain; charset=utf-8
 "payment":{"type":"TRIGGER_PRICE","method":"ALGORITHM","algorithmId":"FX_Res_Knock_Into_FW_Imp_eu"}}}]}}
 ```
 
-#### 3. Fetch product
+##### 3. Fetch product
 
 To select product execute the following script:
 
@@ -171,7 +171,7 @@ Content-Type: text/plain; charset=utf-8
 "payment":{"type":"TRIGGER_PRICE","method":"ALGORITHM","algorithmId":"FX_Res_Knock_Into_FW_Imp_eu"}}}]}}
 ```
 
-#### 4. Delete product
+##### 4. Delete product
 
 To delete product execute the following script:
 
