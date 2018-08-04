@@ -6,6 +6,7 @@ import (
     "testing"
     "encoding/json"
     "bytes"
+    "reflect"
 
     "github.com/gorilla/mux"
     "github.com/stretchr/testify/assert"
@@ -35,7 +36,20 @@ func TestCreateEndpoint(t *testing.T) {
     responsePost := httptest.NewRecorder()
     Router().ServeHTTP(responsePost, requestPost)
     assert.Equal(t, 201, responsePost.Code, "OK response is expected")
+    insertedProduct := dbfunc.Product{}
+    json.Unmarshal(responsePost.Body.Bytes(), &insertedProduct)
 
+    requestGet, _ := http.NewRequest("GET", "/product/"+product.Product_id, nil)
+    responseGet := httptest.NewRecorder()
+    Router().ServeHTTP(responseGet, requestGet)
+    assert.Equal(t, 200, responseGet.Code, "OK response is expected")
+    fetchedProduct := dbfunc.Product{}
+    json.Unmarshal(responsePost.Body.Bytes(), &fetchedProduct)
+
+    ok := reflect.DeepEqual(fetchedProduct, insertedProduct)
+    assert.Equal(t, true, ok, "Products identical")
+
+ 
     requestDelete, _ := http.NewRequest("DELETE", "/product/"+product.Product_id, nil)
     responseDelete := httptest.NewRecorder()
     Router().ServeHTTP(responseDelete, requestDelete)
