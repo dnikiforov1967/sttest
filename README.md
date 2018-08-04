@@ -281,8 +281,11 @@ wait for the async procedure execution completion):
 To see the effect of the rate limit please use the following script
 
 ```sh
-./priceRequestWait.sh 1000
+./priceRequestWait.sh 1000 0.01
 ```
+The first parameter is the number of iterations in batch, the second one is the delay between sequential requests in seconds.
+In example above we execute 100 iterations with 10 ms delay.
+
 You should see the result like this:
 
 
@@ -316,7 +319,7 @@ Too many requests
 ...
 ```
 
-Using config API you can manipulate rate limit value for clientA and see different results
+Using config API you can manipulate rate limit value for clientA as well as delay value in command line and see different results
 
 ---
 
