@@ -44,11 +44,29 @@ func TestCreateEndpoint(t *testing.T) {
     Router().ServeHTTP(responseGet, requestGet)
     assert.Equal(t, 200, responseGet.Code, "OK response is expected")
     fetchedProduct := dbfunc.Product{}
-    json.Unmarshal(responsePost.Body.Bytes(), &fetchedProduct)
+    json.Unmarshal(responseGet.Body.Bytes(), &fetchedProduct)
 
     ok := reflect.DeepEqual(fetchedProduct, insertedProduct)
     assert.Equal(t, true, ok, "Products identical")
 
+    insertedProduct.Name = "New name"
+    jsonProduct, _ = json.Marshal(&insertedProduct)
+    requestPut, _ := http.NewRequest("PUT", "/product/"+product.Product_id, bytes.NewBuffer(jsonProduct))
+    responsePut := httptest.NewRecorder()
+    Router().ServeHTTP(responsePut, requestPut)
+    assert.Equal(t, 200, responsePut.Code, "OK response is expected")
+    updatedProduct := dbfunc.Product{}
+    json.Unmarshal(responsePut.Body.Bytes(), &updatedProduct)
+
+    requestGet, _ = http.NewRequest("GET", "/product/"+product.Product_id, nil)
+    responseGet = httptest.NewRecorder()
+    Router().ServeHTTP(responseGet, requestGet)
+    assert.Equal(t, 200, responseGet.Code, "OK response is expected")
+    fetchedProduct = dbfunc.Product{}
+    json.Unmarshal(responseGet.Body.Bytes(), &fetchedProduct)
+
+    ok = reflect.DeepEqual(fetchedProduct, updatedProduct)
+    assert.Equal(t, true, ok, "Products identical")
  
     requestDelete, _ := http.NewRequest("DELETE", "/product/"+product.Product_id, nil)
     responseDelete := httptest.NewRecorder()
