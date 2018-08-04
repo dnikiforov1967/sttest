@@ -60,6 +60,40 @@ Now you can start application using command:
 ./main
 ```
 ---
+## How to configure application
+
+The configuration file config.json is allocated in project root directory and has the following
+structure
+
+```sh
+{
+    "database":"sttest.sqlt",
+    "timeout":6000,
+    "limits":[
+        {"clientId":"clientA","limit":7
+        {"clientId":"clientC","limit":40}
+    ]
+}
+```
+"database" value should NOT be changed
+"timeout" is the timeout of price calculation
+"limits" values show maximum number of requests to price API can issue each client per second
+
+---
+
+### Configuration API
+
+To setup timeout you can use command
+
+```sh
+./setupTimeout.sh <timeout in milliseconds>
+```
+Request rate limitation can be setup for particular client using the command:
+
+```sh
+./setupRate.sh <client Id> <limit>
+```
+---
 
 ## How to test application
 
@@ -186,3 +220,20 @@ HTTP/1.1 204 No Content
 Date: Fri, 03 Aug 2018 16:20:06 GMT
 ```
 ---
+
+#### Price Service
+
+##### Asynchronious requests
+
+To perform price calculation request you can use the floowing script:
+
+```sh
+./priceRequest.sh
+```
+
+
+---
+
+
+
+
