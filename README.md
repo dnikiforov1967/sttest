@@ -247,6 +247,38 @@ You should immediately get the response like this
 ```sh
 {"resource":"price/1"}
 ```
+The last part of resource string is the unique number of price calculation task
+You should use it to get the status of task using the request
+
+```sh
+./taskRequest.sh <task id>
+```
+where <task id> is the value returnd by price request
+You get the response like
+	
+```sh
+{"id":1,"isin":"67462","status":"IN PROGRESS","price":0,"date":""}
+```
+Status IN PROGRESS means what the price calculation is still being executed.
+After 5 seconds you should get another response on the same request:
+
+```sh
+{"id":2,"isin":"67462","status":"COMPLETED","price":145456.76,"date":"2018-08-04T21:10:31+02:00"}
+```
+Alternatively you can use waiting API to get price. API shall wait for the completion of price calculation (
+wait for the async procedure execution completion):
+
+```sh
+./priceRequestWait.sh
+
+{"id":3,"isin":"67462","status":"COMPLETED","price":145456.76,"date":"2018-08-04T21:17:35+02:00"}
+```
+
+
+	
+
+
+
 
 ---
 
