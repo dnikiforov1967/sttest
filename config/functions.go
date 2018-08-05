@@ -24,7 +24,7 @@ func ReadFromFile(fileName string) {
 	atomic.StoreInt64(&TimeOut, conf.Timeout)
 	Database = conf.Database
         for _, value := range conf.Limits {
-            accesslib.WriteLimit(value.ClientId,value.Limit)
+            accesslib.ClientLimits.WriteLimit(value.ClientId,value.Limit)
         }
 }
 
@@ -69,7 +69,7 @@ func SetRateLimit(w http.ResponseWriter, r *http.Request) {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
         }
-	accesslib.WriteLimit(clientId, rateLimit)
+	accesslib.ClientLimits.WriteLimit(clientId, rateLimit)
 	w.WriteHeader(http.StatusAccepted)
 }
 
@@ -78,7 +78,7 @@ func makeJsonConfig() ConfigStruct {
 	conf.Database = Database
 	conf.Timeout = TimeOut
 	conf.Limits = []accesslib.AccessLimitStruct{}
-	for key, value := range accesslib.ReadLimits() {
+	for key, value := range accesslib.ClientLimits.ReadLimits() {
 		conf.Limits = append(conf.Limits, accesslib.AccessLimitStruct{key, value})
 	}
 	return conf
