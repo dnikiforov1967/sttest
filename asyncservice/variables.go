@@ -8,6 +8,7 @@ import (
 //This variable is responsible to keep information about price calculation tasks
 var TaskCounter taskCounter = taskCounter{0}
 
+//map-specific lock entities
 var (
 	mapAccess atomic.Value
 	mapLock sync.Mutex
