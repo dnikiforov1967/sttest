@@ -61,7 +61,7 @@ func proceed(id uint64, isin string, underlying float64, volatility float64, sig
 			if signalChan != nil {
 				signalChan <- -1
 			}
-			break;
+			return;
 		}
 	}
 	//Normal commitment
