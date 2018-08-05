@@ -14,25 +14,6 @@ import (
     "github.com/dnikiforov1967/accesslib"
 )
 
-//function safely instantiate new task map structure
-func initiateTaskMap() map[uint64]*TaskResponseStruct {
-	tempRef := mapAccess.Load()
-	if tempRef!=nil {
-		return *tempRef.(*map[uint64]*TaskResponseStruct)
-	} else {
-		    mapLock.Lock()
-                    defer mapLock.Unlock()
-                    tempRef = mapAccess.Load()
-                    if (tempRef != nil) {
-			return *tempRef.(*map[uint64]*TaskResponseStruct)
-                    } else {
-			taskMap := make(map[uint64]*TaskResponseStruct)
-			mapAccess.Store(&taskMap)
-			return taskMap
-                    }
-	}
-}
-
 //function rounds float64 to 2 dec. points (bug in go_wrapper does not allow math.Round() to use)
 func Round2(x float64) float64 {
 	x = x *100
@@ -43,24 +24,10 @@ func Round2(x float64) float64 {
     return t/100
 }
 
-func writeToMap(id uint64, response *TaskResponseStruct, respMap map[uint64]*TaskResponseStruct) {
-    mapLock.Lock()
-    defer mapLock.Unlock()
-    respMap[id] = response
-}
-
-func readFromMap(id uint64, respMap map[uint64]*TaskResponseStruct) (*TaskResponseStruct, bool) {
-    mapLock.RLock()
-    defer mapLock.RUnlock()
-    val, ok := respMap[id]
-    return val, ok
-}
-
 //Function executes task. Taks execution takes about 5 sec
 func proceed(id uint64, isin string, underlying float64, volatility float64, signalChan chan int) {
-	respMap := initiateTaskMap();
 	response := TaskResponseStruct{id, isin, StatusInProgress, 0, "", sync.RWMutex{}}
-	writeToMap(id,&response,respMap);
+	taskMap.writeToMap(id,&response);
 
 	initTime := time.Now()
 	
@@ -97,8 +64,7 @@ func checkTimeOut(initTime *time.Time) bool {
 
 //Function returns task state
 func getTaskState(id uint64) (TaskResponseStruct, error) {
-	respMap := initiateTaskMap();
-	val, ok := readFromMap(id,respMap);
+	val, ok := taskMap.readFromMap(id);
         if !ok {
             return TaskResponseStruct{}, nil
         }
