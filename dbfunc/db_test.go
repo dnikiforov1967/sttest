@@ -10,6 +10,8 @@ import (
 func TestDb(t *testing.T) {
     config.Database = "../sttest.sqlt"
 
+    CleanupDatabaseBeforeTest(t)
+
     product := GetTestProduct("ID1")
 
     err := product.InsertProduct()

@@ -36,6 +36,8 @@ func TestCreateEndpoint(t *testing.T) {
     //Read standard configuration
     config.ReadFromFile(config.ConfigFileName)
 
+    dbfunc.CleanupDatabaseBeforeTest(t)
+
     product := dbfunc.GetTestProduct("ID0")
     jsonProduct, _ := json.Marshal(&product)
 
