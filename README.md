@@ -276,6 +276,62 @@ wait for the async procedure execution completion):
 {"id":3,"isin":"67462","status":"COMPLETED","price":145456.76,"date":"2018-08-04T21:17:35+02:00"}
 ```
 
+##### Timeouts
+
+Setup timeout value equal to 2 seconds using command:
+
+```sh
+./setupTimeout.sh 2000
+```
+Start new price request:
+
+```sh
+./priceRequest.sh
+{"resource":"price/2"}
+```
+After two seconds request the state of task. You shouls see TIMED OUT status. This means task execution was interrupted
+by timeout
+
+```sh
+./taskRequest.sh 2
+{"id":2,"isin":"67462","status":"TIMED OUT","price":0,"date":""}
+```
+Similarly start waiting request. You should get floowing result:
+
+```sh
+./priceRequestWait.sh
+Task cancelled by timeout
+```
+Setup timeout value equal to 6 seconds:
+
+```sh
+./setupTimeout.sh 6000
+```
+Start new price request:
+
+```sh
+./priceRequest.sh
+{"resource":"price/4"}
+```
+Before 6 seconds after start task request should return:
+
+```sh
+./taskRequest.sh 4
+{"id":4,"isin":"67462","status":"IN PROGRESS","price":0,"date":""}
+```
+After 6 seconds you should get normal completion
+
+```sh
+./taskRequest.sh 4
+{"id":4,"isin":"67462","status":"COMPLETED","price":145456.76,"date":"2018-08-05T20:24:03+02:00"}
+```
+Similarly:
+
+```sh
+./priceRequestWait.sh
+{"id":5,"isin":"67462","status":"COMPLETED","price":145456.76,"date":"2018-08-05T20:26:59+02:00"}
+```
+
 ##### Rate limit in action
 
 To see the effect of the rate limit please use the following script
