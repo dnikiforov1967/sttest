@@ -1,6 +1,19 @@
 package asyncservice
 
-import "time"
+import (
+    "time"
+    "sync"
+)
+
+//Structure of task response
+type TaskResponse struct {
+    Id uint64 `json:"id"`
+    Isin string `json:"isin"`
+    Status string `json:"status"`
+    Price float64 `json:"price"`
+    PriceDate string `json:"date"`
+    taskMutex sync.RWMutex
+}
 
 //Method updates task (row-specific lock)
 func (response *TaskResponse) writeData(price float64) {
