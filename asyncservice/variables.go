@@ -11,5 +11,5 @@ var taskIdGenerator taskCounterStruct = taskCounterStruct{0}
 //map-specific lock entities
 var (
 	mapAccess atomic.Value
-	mapLock sync.Mutex
+	mapLock sync.RWMutex
 )

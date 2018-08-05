@@ -21,15 +21,15 @@ func initiateTaskMap() map[uint64]*TaskResponseStruct {
 		return *tempRef.(*map[uint64]*TaskResponseStruct)
 	} else {
 		    mapLock.Lock()
-			defer mapLock.Unlock()
-			tempRef = mapAccess.Load()
-			if (tempRef != nil) {
-				return *tempRef.(*map[uint64]*TaskResponseStruct)
-			} else {
-				taskMap := make(map[uint64]*TaskResponseStruct)
-				mapAccess.Store(&taskMap)
-				return taskMap
-			}
+                    defer mapLock.Unlock()
+                    tempRef = mapAccess.Load()
+                    if (tempRef != nil) {
+			return *tempRef.(*map[uint64]*TaskResponseStruct)
+                    } else {
+			taskMap := make(map[uint64]*TaskResponseStruct)
+			mapAccess.Store(&taskMap)
+			return taskMap
+                    }
 	}
 }
 
@@ -43,11 +43,24 @@ func Round2(x float64) float64 {
     return t/100
 }
 
+func writeToMap(id uint64, response *TaskResponseStruct, respMap map[uint64]*TaskResponseStruct) {
+    mapLock.Lock()
+    defer mapLock.Unlock()
+    respMap[id] = response
+}
+
+func readFromMap(id uint64, respMap map[uint64]*TaskResponseStruct) (*TaskResponseStruct, bool) {
+    mapLock.RLock()
+    defer mapLock.RUnlock()
+    val, ok := respMap[id]
+    return val, ok
+}
+
 //Function executes task. Taks execution takes about 5 sec
 func proceed(id uint64, isin string, underlying float64, volatility float64, signalChan chan int) {
 	respMap := initiateTaskMap();
 	response := TaskResponseStruct{id, isin, StatusInProgress, 0, "", sync.RWMutex{}}
-	respMap[id] = &response;
+	writeToMap(id,&response,respMap);
 
 	initTime := time.Now()
 	
@@ -85,7 +98,10 @@ func checkTimeOut(initTime *time.Time) bool {
 //Function returns task state
 func getTaskState(id uint64) (TaskResponseStruct, error) {
 	respMap := initiateTaskMap();
-	val, ok := respMap[id];
+	val, ok := readFromMap(id,respMap);
+        if !ok {
+            return TaskResponseStruct{}, nil
+        }
 	val.readLock()
 	defer val.readUnlock()
 	if ok {
