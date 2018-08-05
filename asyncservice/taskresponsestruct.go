@@ -6,7 +6,7 @@ import (
 )
 
 //Structure of task response
-type TaskResponse struct {
+type TaskResponseStruct struct {
     Id uint64 `json:"id"`
     Isin string `json:"isin"`
     Status string `json:"status"`
@@ -16,7 +16,7 @@ type TaskResponse struct {
 }
 
 //Method updates task (row-specific lock)
-func (response *TaskResponse) writeData(price float64) {
+func (response *TaskResponseStruct) writeData(price float64) {
 	response.taskMutex.Lock()
 	defer response.taskMutex.Unlock()
 	response.Status = StatusCompleted
@@ -25,11 +25,11 @@ func (response *TaskResponse) writeData(price float64) {
 }
 
 //Method locks task instance in read mode
-func (response *TaskResponse) readLock() {
+func (response *TaskResponseStruct) readLock() {
 	response.taskMutex.RLock()
 }
 
 //Method unlocks task instance in read mode
-func (response *TaskResponse) readUnlock() {
+func (response *TaskResponseStruct) readUnlock() {
 	response.taskMutex.RUnlock()
 }

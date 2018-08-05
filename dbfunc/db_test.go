@@ -20,7 +20,7 @@ func TestDb(t *testing.T) {
         return
     }
 
-    productToCheck := Product{}
+    productToCheck := ProductStruct{}
     productToCheck.Product_id = product.Product_id
 
     productToCheck.FetchProductByProductId()
@@ -33,7 +33,7 @@ func TestDb(t *testing.T) {
     product.Name = "New name"
     product.UpdateProduct("ID1")
 
-    productToCheck = Product{}
+    productToCheck = ProductStruct{}
     productToCheck.Product_id = product.Product_id
 
     productToCheck.FetchProductByProductId()

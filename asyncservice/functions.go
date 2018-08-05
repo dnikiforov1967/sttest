@@ -15,18 +15,18 @@ import (
 )
 
 //function safely instantiate new task map structure
-func initiateTaskMap() map[uint64]*TaskResponse {
+func initiateTaskMap() map[uint64]*TaskResponseStruct {
 	tempRef := mapAccess.Load()
 	if tempRef!=nil {
-		return *tempRef.(*map[uint64]*TaskResponse)
+		return *tempRef.(*map[uint64]*TaskResponseStruct)
 	} else {
 		    mapLock.Lock()
 			defer mapLock.Unlock()
 			tempRef = mapAccess.Load()
 			if (tempRef != nil) {
-				return *tempRef.(*map[uint64]*TaskResponse)
+				return *tempRef.(*map[uint64]*TaskResponseStruct)
 			} else {
-				taskMap := make(map[uint64]*TaskResponse)
+				taskMap := make(map[uint64]*TaskResponseStruct)
 				mapAccess.Store(&taskMap)
 				return taskMap
 			}
@@ -46,7 +46,7 @@ func Round2(x float64) float64 {
 //Function executes task. Taks execution takes about 5 sec
 func proceed(id uint64, isin string, underlying float64, volatility float64, signalChan chan int) {
 	respMap := initiateTaskMap();
-	response := TaskResponse{id, isin, StatusInProgress, 0, "", sync.RWMutex{}}
+	response := TaskResponseStruct{id, isin, StatusInProgress, 0, "", sync.RWMutex{}}
 	respMap[id] = &response;
 
 	initTime := time.Now()
@@ -83,7 +83,7 @@ func checkTimeOut(initTime *time.Time) bool {
 }
 
 //Function returns task state
-func getTaskState(id uint64) (TaskResponse, error) {
+func getTaskState(id uint64) (TaskResponseStruct, error) {
 	respMap := initiateTaskMap();
 	val, ok := respMap[id];
 	val.readLock()
@@ -97,18 +97,18 @@ func getTaskState(id uint64) (TaskResponse, error) {
 
 //Function proceeds price request. It returns path to task resource for later check
 func AcceptPriceRequest(w http.ResponseWriter, r *http.Request) {
-	priceRequest := PriceRequest{}
+	priceRequest := PriceRequestStruct{}
 	_ = json.NewDecoder(r.Body).Decode(&priceRequest)
     w.WriteHeader(http.StatusAccepted)
 	taskId := taskIdGenerator.getTaskId();
 	go proceed(taskId, priceRequest.Isin, priceRequest.Underlying, priceRequest.Volatility, nil)
-    response := AsyncResponse{"price/"+strconv.FormatUint(taskId,10)}
+    response := AsyncResponseStruct{"price/"+strconv.FormatUint(taskId,10)}
     json.NewEncoder(w).Encode(response);
 }
 
 //Function proceeds price request in sync.  
 func WaitPriceRequest(w http.ResponseWriter, r *http.Request) {
-	priceRequest := PriceRequest{}
+	priceRequest := PriceRequestStruct{}
 	_ = json.NewDecoder(r.Body).Decode(&priceRequest)
 	taskId := taskIdGenerator.getTaskId();
 	signalChan := make(chan int)

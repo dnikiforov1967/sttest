@@ -7,9 +7,21 @@ import (
     _ "github.com/mattn/go-sqlite3"
 )
 
+//Product top representation
+type ProductStruct struct {
+    id int64
+    Name string `json:"name"`
+    Product_id string `json:"product_id"`
+    Category string `json:"category"`
+    Quanto bool `json:"quanto"`
+    CreationDate string `json:"creationDate"`
+    ExpirationDate string `json:"expirationDate"`
+    Terms TermsStruct `json:"terms"`
+}
+
 //Method searches Product record in database which has specified product_id value
 //and returns its database-specific primary key value
-func (prod *Product) findIdByProductId(tx *sql.Tx) error {
+func (prod *ProductStruct) findIdByProductId(tx *sql.Tx) error {
     row := tx.QueryRow("select id from products where product_id = $1",
     prod.Product_id);
     err := row.Scan(&prod.id)
@@ -24,7 +36,7 @@ func (prod *Product) findIdByProductId(tx *sql.Tx) error {
 }
 
 //Method searches Product record in database which has specified product_id value
-func (prod *Product) FetchProductByProductId() (error) {
+func (prod *ProductStruct) FetchProductByProductId() (error) {
     db, err := openLocalDb();
     if err != nil {
         return err
@@ -47,7 +59,7 @@ func (prod *Product) FetchProductByProductId() (error) {
     defer rows.Close()
     prod.Terms = TermsStruct{}
     for rows.Next(){
-        event := Event{}
+        event := EventStruct{}
         err := rows.Scan(&event.EventType, &event.Terminal, &event.Kind, &event.Origin,
 				&event.ExecType, &event.Path, &event.CashType, &event.PaymentType, &event.Method, &event.AlgorithmId);
         if err != nil {
@@ -59,7 +71,7 @@ func (prod *Product) FetchProductByProductId() (error) {
 }
 
 //Method saves in the database all Event objects what pertain to this Product object
-func (prod *Product) InsertEvents(tx *sql.Tx) error {
+func (prod *ProductStruct) InsertEvents(tx *sql.Tx) error {
     //Cycle to insert referenced data
     for _, event := range prod.Terms.Events {
         event.parent_id = prod.id
@@ -73,7 +85,7 @@ func (prod *Product) InsertEvents(tx *sql.Tx) error {
 }
 
 //Method saves Product object in the database
-func (prod *Product) InsertProduct() error {
+func (prod *ProductStruct) InsertProduct() error {
     
     db, err := openLocalDb();
     if err != nil {
@@ -113,7 +125,7 @@ func (prod *Product) InsertProduct() error {
 //Method updates Product object in the database
 //Method accepts product_id value of Product to be updated as the parameter
 //This is because product_id can be modified
-func (prod *Product) UpdateProduct(origId string) error {
+func (prod *ProductStruct) UpdateProduct(origId string) error {
     
     db, err := openLocalDb();
     if err != nil {
@@ -170,7 +182,7 @@ func (prod *Product) UpdateProduct(origId string) error {
 }
 
 //Method deleted Product from database by product_id value
-func (prod *Product) DeleteProductByProductId() error {
+func (prod *ProductStruct) DeleteProductByProductId() error {
     
     db, err := openLocalDb()
     if err != nil{

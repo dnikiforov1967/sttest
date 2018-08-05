@@ -6,7 +6,7 @@ import (
 )
 
 //This variable is responsible to keep information about price calculation tasks
-var taskIdGenerator taskCounter = taskCounter{0}
+var taskIdGenerator taskCounterStruct = taskCounterStruct{0}
 
 //map-specific lock entities
 var (

@@ -47,14 +47,14 @@ func TestCreateEndpoint(t *testing.T) {
     responsePost := httptest.NewRecorder()
     router.ServeHTTP(responsePost, requestPost)
     assert.Equal(t, 201, responsePost.Code, "OK response is expected")
-    insertedProduct := dbfunc.Product{}
+    insertedProduct := dbfunc.ProductStruct{}
     json.Unmarshal(responsePost.Body.Bytes(), &insertedProduct)
 
     requestGet, _ := http.NewRequest("GET", "/product/"+product.Product_id, nil)
     responseGet := httptest.NewRecorder()
     router.ServeHTTP(responseGet, requestGet)
     assert.Equal(t, 200, responseGet.Code, "OK response is expected")
-    fetchedProduct := dbfunc.Product{}
+    fetchedProduct := dbfunc.ProductStruct{}
     json.Unmarshal(responseGet.Body.Bytes(), &fetchedProduct)
 
     ok := reflect.DeepEqual(fetchedProduct, insertedProduct)
@@ -66,14 +66,14 @@ func TestCreateEndpoint(t *testing.T) {
     responsePut := httptest.NewRecorder()
     router.ServeHTTP(responsePut, requestPut)
     assert.Equal(t, 200, responsePut.Code, "OK response is expected")
-    updatedProduct := dbfunc.Product{}
+    updatedProduct := dbfunc.ProductStruct{}
     json.Unmarshal(responsePut.Body.Bytes(), &updatedProduct)
 
     requestGet, _ = http.NewRequest("GET", "/product/"+product.Product_id, nil)
     responseGet = httptest.NewRecorder()
     router.ServeHTTP(responseGet, requestGet)
     assert.Equal(t, 200, responseGet.Code, "OK response is expected")
-    fetchedProduct = dbfunc.Product{}
+    fetchedProduct = dbfunc.ProductStruct{}
     json.Unmarshal(responseGet.Body.Bytes(), &fetchedProduct)
 
     ok = reflect.DeepEqual(fetchedProduct, updatedProduct)
@@ -89,7 +89,7 @@ func TestCreateEndpoint(t *testing.T) {
     router.ServeHTTP(responseGet, requestGet)
     assert.Equal(t, 404, responseGet.Code, "OK response is expected")
 
-    priceRequest := asyncservice.PriceRequest{"ISIN0",0.4, 0.007}
+    priceRequest := asyncservice.PriceRequestStruct{"ISIN0",0.4, 0.007}
     jsonPriceRequest, _ := json.Marshal(&priceRequest)
     request, _ := http.NewRequest("POST", "/price", bytes.NewBuffer(jsonPriceRequest))
     response := httptest.NewRecorder()
