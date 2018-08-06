@@ -8,7 +8,7 @@ import (
 )
 
 func TestDb(t *testing.T) {
-    config.Database = "../sttest.sqlt"
+    config.Database.Store("../sttest.sqlt")
 
     CleanupDatabaseBeforeTest(t)
 

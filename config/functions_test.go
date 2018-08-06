@@ -6,7 +6,7 @@ import(
 
 func TestConfig(t *testing.T) {
     ReadFromFile("../config.json")
-    if Database != "sttest.sqlt" {
+    if Database.Load().(string) != "sttest.sqlt" {
         t.Errorf("Incorrect database name")
     }
 }
