@@ -8,7 +8,7 @@ import (
 
 //Function opens db connection
 func openLocalDb() (*sql.DB, error) {
-    db, err := sql.Open("sqlite3", config.Database)
+    db, err := sql.Open("sqlite3", config.Database.Load().(string))
     if err != nil {
         return nil, err
     }
