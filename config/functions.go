@@ -5,13 +5,15 @@ import (
 	"log"
 	"strconv"
 	"encoding/json"
-        "github.com/dnikiforov1967/accesslib"
+    "github.com/dnikiforov1967/accesslib"
 	"sync/atomic"
 	"net/http"
 	"github.com/gorilla/mux"
 )
 
 func ReadFromFile(fileName string) {
+	configMutex.Lock()
+	defer configMutex.Unlock()
 	conf := &ConfigStruct{}
 	file, err := ioutil.ReadFile(fileName)
 	if err != nil {
@@ -23,12 +25,12 @@ func ReadFromFile(fileName string) {
         }
 	atomic.StoreInt64(&TimeOut, conf.Timeout)
 	Database = conf.Database
-        for _, value := range conf.Limits {
-            accesslib.ClientLimits.WriteLimit(value.ClientId,value.Limit)
-        }
+    for _, value := range conf.Limits {
+		accesslib.ClientLimits.WriteLimit(value.ClientId,value.Limit)
+    }
 }
 
-func WriteToFile(fileName string, conf *ConfigStruct) {
+func writeToFile(fileName string, conf *ConfigStruct) {
 	bytes, err := json.Marshal(conf);
 	if err != nil {
 		log.Fatal(err.Error())
@@ -40,13 +42,13 @@ func WriteToFile(fileName string, conf *ConfigStruct) {
 }
 
 func updateConfig() {
-	configMutex.Lock()
-	defer configMutex.Unlock()
 	conf := makeJsonConfig()
-	WriteToFile(ConfigFileName, &conf)
+	writeToFile(ConfigFileName, &conf)
 }
 
 func SetTimeout(w http.ResponseWriter, r *http.Request) {
+	configMutex.Lock()
+	defer configMutex.Unlock()
 	defer updateConfig()
 	params := mux.Vars(r);
 	var param string = params["timeout"]
@@ -60,6 +62,8 @@ func SetTimeout(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetRateLimit(w http.ResponseWriter, r *http.Request) {
+	configMutex.Lock()
+	defer configMutex.Unlock()
 	defer updateConfig()
 	params := mux.Vars(r);
 	clientId := params["clientId"]
@@ -76,7 +80,7 @@ func SetRateLimit(w http.ResponseWriter, r *http.Request) {
 func makeJsonConfig() ConfigStruct {
 	conf := ConfigStruct{}
 	conf.Database = Database
-	conf.Timeout = TimeOut
+	conf.Timeout = atomic.LoadInt64(&TimeOut)	
 	conf.Limits = []accesslib.AccessLimitStruct{}
 	for key, value := range accesslib.ClientLimits.ReadLimits() {
 		conf.Limits = append(conf.Limits, accesslib.AccessLimitStruct{key, value})
@@ -85,6 +89,8 @@ func makeJsonConfig() ConfigStruct {
 }
 
 func GetConfiguration(w http.ResponseWriter, r *http.Request) {
+	configMutex.RLock()
+	defer configMutex.RUnlock()
 	conf := makeJsonConfig()
 	json.NewEncoder(w).Encode(&conf);
 }
