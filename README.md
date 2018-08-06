@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-1. Database - SQLite 3.X
+1. Database - SQLite 3
 ---
 ## How to build project
 
@@ -93,6 +93,13 @@ Request rate limitation can be setup for particular client using the command:
 ```sh
 ./setupRate.sh <client Id> <limit>
 ```
+
+You can see current configuration using the request:
+
+```sh
+./getConfig.sh
+```
+
 ---
 
 ## How to test application
